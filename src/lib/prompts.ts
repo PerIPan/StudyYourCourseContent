@@ -40,12 +40,14 @@ You must respond with valid JSON in this exact format:
   "modelAnswer": "A thorough model answer with source references (use markdown: paragraphs, **bold**, lists, headings)"
 }`;
 
-export function buildExamGenerateMessages(context: string, questionType: string) {
+export function buildExamGenerateMessages(context: string, questionType: string, topicHint?: string) {
   const typeInstruction: Record<string, string> = {
     'open-ended': 'Generate an open-ended question that requires explanation and analysis.',
     'scenario': 'Generate a scenario-based question where the student must apply concepts to a realistic cybersecurity situation. Set the scene, then ask what they would do as a CISO or security leader.',
     'compare-contrast': 'Generate a compare-and-contrast question that requires the student to analyze similarities and differences between two or more concepts from the material.',
   };
 
-  return `${typeInstruction[questionType] || 'Generate an open-ended question.'}\n\nSource material:\n${context}`;
+  const topicLine = topicHint ? `\nFocus the question on this topic: "${topicHint}". Use the source material related to this topic.\n` : '';
+
+  return `${typeInstruction[questionType] || 'Generate an open-ended question.'}${topicLine}\n\nSource material:\n${context}`;
 }

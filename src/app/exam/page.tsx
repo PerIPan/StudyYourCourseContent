@@ -18,6 +18,7 @@ export default function ExamPage() {
   const [state, setState] = useState<ExamState>('setup');
   const [courseSlug, setCourseSlug] = useState<string | null>(null);
   const [questionType, setQuestionType] = useState('open-ended');
+  const [topicHint, setTopicHint] = useState('');
   const [currentQuestion, setCurrentQuestion] = useState<ExamQ | null>(null);
   const [currentGrade, setCurrentGrade] = useState<ExamGrade | null>(null);
   const [generating, setGenerating] = useState(false);
@@ -36,7 +37,7 @@ export default function ExamPage() {
       const res = await fetch('/api/exam/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ courseSlug, questionType }),
+        body: JSON.stringify({ courseSlug, questionType, topicHint: topicHint.trim() || undefined }),
       });
       if (!res.ok) throw new Error('Failed to generate');
       const data = await res.json();
@@ -107,6 +108,7 @@ export default function ExamPage() {
         <ExamSetup
           courseSlug={courseSlug} setCourseSlug={setCourseSlug}
           questionType={questionType} setQuestionType={setQuestionType}
+          topicHint={topicHint} setTopicHint={setTopicHint}
           onGenerate={handleGenerate} loading={generating}
           sessionScore={sessionScore}
         />
