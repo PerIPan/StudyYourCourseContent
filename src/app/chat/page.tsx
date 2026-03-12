@@ -32,7 +32,7 @@ export default function ChatPage() {
     if (!isLoading && messages.length > prevMessagesLen.current) {
       const last = messages[messages.length - 1];
       if (last.role === 'assistant' && last.content) {
-        const voiceMatch = last.content.match(/\[VOICE:\s*(.+?)\]/s);
+        const voiceMatch = last.content.match(/\[VOICE:\s*([\s\S]+?)\]/);
         if (voiceMatch) {
           voice.speak(voiceMatch[1].trim());
         }
