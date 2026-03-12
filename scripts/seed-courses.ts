@@ -51,9 +51,10 @@ async function seed() {
     `);
 
     await client.query('CREATE INDEX IF NOT EXISTS chunks_document_id_idx ON chunks(document_id)');
+    // ivfflat index needs data to exist; use hnsw instead (works on empty tables)
     await client.query(`
       CREATE INDEX IF NOT EXISTS chunks_embedding_idx
-      ON chunks USING ivfflat (embedding_vec vector_cosine_ops) WITH (lists = 10)
+      ON chunks USING hnsw (embedding_vec vector_cosine_ops)
     `);
 
     await client.query(`
