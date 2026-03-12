@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
   const citations = extractCitations(sourceChunks as ChunkResult[]);
 
   const response = await getAnthropic().messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-6',
     max_tokens: 1500,
     system: EXAM_GRADE_PROMPT,
     messages: [{

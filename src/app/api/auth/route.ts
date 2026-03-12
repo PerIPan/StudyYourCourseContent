@@ -35,3 +35,9 @@ export async function GET() {
 
   return NextResponse.json({ role: auth.value });
 }
+
+export async function DELETE() {
+  const cookieStore = await cookies();
+  cookieStore.delete('cla-auth');
+  return NextResponse.json({ ok: true });
+}

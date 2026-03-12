@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export function NavTabs({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const tabs = [
     { href: '/chat', label: 'Chat' },
@@ -12,8 +13,13 @@ export function NavTabs({ isAdmin = false }: { isAdmin?: boolean }) {
     ...(isAdmin ? [{ href: '/admin', label: 'Admin' }] : []),
   ];
 
+  async function handleLogout() {
+    await fetch('/api/auth', { method: 'DELETE' });
+    router.push('/');
+  }
+
   return (
-    <div className="flex gap-0">
+    <div className="flex gap-0 items-center">
       {tabs.map(tab => (
         <Link
           key={tab.href}
@@ -27,6 +33,12 @@ export function NavTabs({ isAdmin = false }: { isAdmin?: boolean }) {
           {tab.label}
         </Link>
       ))}
+      <button
+        onClick={handleLogout}
+        className="ml-2 px-3 py-1.5 text-xs text-slate-400 hover:text-red-500 transition-colors"
+      >
+        Logout
+      </button>
     </div>
   );
 }
