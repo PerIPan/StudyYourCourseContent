@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       questionId,
       question: parsed.question,
       questionType,
-      courseName: chunks[0].course_name,
+      courseName: chunks[0].courseName,
       lectureScope: lectureNumber || null,
     });
   } catch {

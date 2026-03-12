@@ -1,4 +1,4 @@
-import pdfParse from 'pdf-parse';
+import { PDFParse } from 'pdf-parse';
 import mammoth from 'mammoth';
 
 interface PageText {
@@ -7,11 +7,13 @@ interface PageText {
 }
 
 export async function parsePdf(buffer: Buffer): Promise<PageText[]> {
-  const data = await pdfParse(buffer);
-  const pages = data.text.split('\f');
-  return pages.map((text, i) => ({
-    pageNumber: i + 1,
-    text: text.trim(),
+  const parser = new PDFParse({ data: new Uint8Array(buffer) });
+  const result = await parser.getText();
+  await parser.destroy();
+
+  return result.pages.map(p => ({
+    pageNumber: p.num,
+    text: p.text.trim(),
   })).filter(p => p.text.length > 0);
 }
 
