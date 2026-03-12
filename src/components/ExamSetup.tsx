@@ -1,23 +1,22 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
+interface Course {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 interface ExamSetupProps {
   courseSlug: string | null;
   setCourseSlug: (slug: string | null) => void;
-  lectureNumber: number | null;
-  setLectureNumber: (n: number | null) => void;
   questionType: string;
   setQuestionType: (t: string) => void;
   onGenerate: () => void;
   loading: boolean;
   sessionScore: { total: number; count: number };
 }
-
-const COURSES = [
-  { slug: null, label: 'All Courses' },
-  { slug: 'foundations', label: 'Foundations' },
-  { slug: 'strategy', label: 'Strategy' },
-  { slug: 'threat-landscape', label: 'Threats' },
-];
 
 const QUESTION_TYPES = [
   { value: 'open-ended', label: 'Open-ended' },
@@ -26,60 +25,48 @@ const QUESTION_TYPES = [
 ];
 
 export function ExamSetup({
-  courseSlug, setCourseSlug, lectureNumber, setLectureNumber,
+  courseSlug, setCourseSlug,
   questionType, setQuestionType, onGenerate, loading, sessionScore,
 }: ExamSetupProps) {
+  const [courses, setCourses] = useState<Course[]>([]);
+
+  useEffect(() => {
+    fetch('/api/courses')
+      .then(r => r.ok ? r.json() : [])
+      .then(setCourses)
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="flex-1 p-6 max-w-lg mx-auto w-full">
       <div className="mb-5">
         <div className="text-xs font-semibold text-slate-400 uppercase mb-2">Course</div>
         <div className="flex gap-2 flex-wrap">
-          {COURSES.map(c => (
+          <button
+            onClick={() => setCourseSlug(null)}
+            className={`text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors ${
+              courseSlug === null
+                ? 'bg-indigo-50 text-indigo-600 border-indigo-500'
+                : 'bg-white text-slate-500 border-slate-200'
+            }`}
+          >
+            All Courses
+          </button>
+          {courses.map(c => (
             <button
-              key={c.slug ?? 'all'}
-              onClick={() => { setCourseSlug(c.slug); setLectureNumber(null); }}
+              key={c.slug}
+              onClick={() => setCourseSlug(c.slug)}
               className={`text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors ${
                 courseSlug === c.slug
                   ? 'bg-indigo-50 text-indigo-600 border-indigo-500'
                   : 'bg-white text-slate-500 border-slate-200'
               }`}
             >
-              {c.label}
+              {c.name}
             </button>
           ))}
         </div>
       </div>
-
-      {courseSlug && (
-        <div className="mb-5">
-          <div className="text-xs font-semibold text-slate-400 uppercase mb-2">Lecture</div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setLectureNumber(null)}
-              className={`text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors ${
-                lectureNumber === null
-                  ? 'bg-indigo-50 text-indigo-600 border-indigo-500'
-                  : 'bg-white text-slate-500 border-slate-200'
-              }`}
-            >
-              All
-            </button>
-            {[1, 2, 3, 4, 5, 6].map(n => (
-              <button
-                key={n}
-                onClick={() => setLectureNumber(n)}
-                className={`text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors ${
-                  lectureNumber === n
-                    ? 'bg-indigo-50 text-indigo-600 border-indigo-500'
-                    : 'bg-white text-slate-500 border-slate-200'
-                }`}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="mb-6">
         <div className="text-xs font-semibold text-slate-400 uppercase mb-2">Question Type</div>

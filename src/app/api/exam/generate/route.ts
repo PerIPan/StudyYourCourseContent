@@ -22,38 +22,26 @@ export async function POST(request: NextRequest) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const { courseSlug, lectureNumber, questionType } = await request.json();
+  const { courseSlug, questionType } = await request.json();
 
   let result;
-  if (courseSlug && lectureNumber) {
+  if (courseSlug) {
     result = await sql`
-      SELECT c.content, c.page_number, c.chunk_index,
+      SELECT c.content, c.page_number, c.chunk_index, c.course_slug,
              d.filename, d.lecture_number, d.priority,
-             co.name as course_name, co.slug as course_slug
+             co.name as course_name
       FROM chunks c
       JOIN documents d ON c.document_id = d.id
       JOIN courses co ON d.course_id = co.id
-      WHERE co.slug = ${courseSlug} AND d.lecture_number = ${lectureNumber}
-      ORDER BY RANDOM()
-      LIMIT 5
-    `;
-  } else if (courseSlug) {
-    result = await sql`
-      SELECT c.content, c.page_number, c.chunk_index,
-             d.filename, d.lecture_number, d.priority,
-             co.name as course_name, co.slug as course_slug
-      FROM chunks c
-      JOIN documents d ON c.document_id = d.id
-      JOIN courses co ON d.course_id = co.id
-      WHERE co.slug = ${courseSlug}
+      WHERE c.course_slug = ${courseSlug}
       ORDER BY RANDOM()
       LIMIT 5
     `;
   } else {
     result = await sql`
-      SELECT c.content, c.page_number, c.chunk_index,
+      SELECT c.content, c.page_number, c.chunk_index, c.course_slug,
              d.filename, d.lecture_number, d.priority,
-             co.name as course_name, co.slug as course_slug
+             co.name as course_name
       FROM chunks c
       JOIN documents d ON c.document_id = d.id
       JOIN courses co ON d.course_id = co.id
@@ -62,7 +50,7 @@ export async function POST(request: NextRequest) {
     `;
   }
 
-  const chunks = result.rows as ChunkResult[];
+  const chunks = result.rows as unknown as ChunkResult[];
 
   if (chunks.length === 0) {
     return NextResponse.json({ error: 'No content available for this scope' }, { status: 404 });
@@ -94,8 +82,8 @@ export async function POST(request: NextRequest) {
       questionId,
       question: parsed.question,
       questionType,
-      courseName: chunks[0].courseName,
-      lectureScope: lectureNumber || null,
+      courseName: chunks[0].course_name,
+      lectureScope: null,
     });
   } catch {
     return NextResponse.json({ error: 'Failed to generate question' }, { status: 500 });

@@ -17,7 +17,6 @@ export default function ExamPage() {
 
   const [state, setState] = useState<ExamState>('setup');
   const [courseSlug, setCourseSlug] = useState<string | null>(null);
-  const [lectureNumber, setLectureNumber] = useState<number | null>(null);
   const [questionType, setQuestionType] = useState('open-ended');
   const [currentQuestion, setCurrentQuestion] = useState<ExamQ | null>(null);
   const [currentGrade, setCurrentGrade] = useState<ExamGrade | null>(null);
@@ -35,7 +34,7 @@ export default function ExamPage() {
       const res = await fetch('/api/exam/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ courseSlug, lectureNumber, questionType }),
+        body: JSON.stringify({ courseSlug, questionType }),
       });
       if (!res.ok) throw new Error('Failed to generate');
       const data = await res.json();
@@ -78,7 +77,9 @@ export default function ExamPage() {
   return (
     <div className="h-screen flex flex-col bg-slate-50">
       <header className="bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-3">
-        <span className="text-xl">🛡️</span>
+        <svg className="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
         <span className="font-semibold text-slate-800 text-sm">CLA Knowledgebase</span>
         <NavTabs isAdmin={role === 'admin'} />
       </header>
@@ -86,7 +87,6 @@ export default function ExamPage() {
       {state === 'setup' && (
         <ExamSetup
           courseSlug={courseSlug} setCourseSlug={setCourseSlug}
-          lectureNumber={lectureNumber} setLectureNumber={setLectureNumber}
           questionType={questionType} setQuestionType={setQuestionType}
           onGenerate={handleGenerate} loading={generating}
           sessionScore={sessionScore}

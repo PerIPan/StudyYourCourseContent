@@ -19,14 +19,14 @@ export interface Document {
 export interface ChunkResult {
   id: string;
   content: string;
-  pageNumber: number;
-  chunkIndex: number;
+  page_number: number;
+  chunk_index: number;
   filename: string;
-  lectureNumber: number;
+  lecture_number: number;
   priority: string;
-  courseName: string;
-  courseSlug: string;
-  similarity: number;
+  course_name: string;
+  course_slug: string;
+  similarity?: number;
 }
 
 export interface ChatMessage {
