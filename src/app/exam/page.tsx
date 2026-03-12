@@ -23,6 +23,7 @@ export default function ExamPage() {
   const [generating, setGenerating] = useState(false);
   const [grading, setGrading] = useState(false);
   const [sessionScore, setSessionScore] = useState({ total: 0, count: 0 });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !role) router.push('/');
@@ -30,6 +31,7 @@ export default function ExamPage() {
 
   async function handleGenerate() {
     setGenerating(true);
+    setErrorMessage(null);
     try {
       const res = await fetch('/api/exam/generate', {
         method: 'POST',
@@ -41,7 +43,7 @@ export default function ExamPage() {
       setCurrentQuestion(data);
       setState('question');
     } catch {
-      alert('Failed to generate question. Make sure content is uploaded.');
+      setErrorMessage('Failed to generate question. Make sure content is uploaded.');
     } finally {
       setGenerating(false);
     }
@@ -50,6 +52,7 @@ export default function ExamPage() {
   async function handleSubmitAnswer(answer: string) {
     if (!currentQuestion) return;
     setGrading(true);
+    setErrorMessage(null);
     try {
       const res = await fetch('/api/exam/grade', {
         method: 'POST',
@@ -66,7 +69,7 @@ export default function ExamPage() {
       setSessionScore(prev => ({ total: prev.total + grade.score, count: prev.count + 1 }));
       setState('grading');
     } catch {
-      alert('Failed to grade answer.');
+      setErrorMessage('Failed to grade answer.');
     } finally {
       setGrading(false);
     }
@@ -83,6 +86,22 @@ export default function ExamPage() {
         <span className="font-semibold text-slate-800 text-sm">CLA Knowledgebase</span>
         <NavTabs isAdmin={role === 'admin'} />
       </header>
+
+      {errorMessage && (
+        <div className="mx-4 mt-3 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm flex items-center justify-between">
+          <span>{errorMessage}</span>
+          <button
+            onClick={() => setErrorMessage(null)}
+            className="ml-3 text-red-400 hover:text-red-600 transition-colors flex-shrink-0"
+            aria-label="Dismiss error"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {state === 'setup' && (
         <ExamSetup

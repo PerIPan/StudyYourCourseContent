@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useChat } from '@/hooks/useChat';
@@ -20,16 +20,27 @@ export default function ChatPage() {
     if (!loading && !role) router.push('/');
   }, [loading, role, router]);
 
+  // Cancel TTS when user sends a new message
+  const wrappedSendMessage = useCallback((text: string) => {
+    voice.stopSpeaking();
+    sendMessage(text);
+  }, [sendMessage, voice.stopSpeaking]);
+
+  // TTS: read [VOICE] summary when assistant response finishes
   const prevMessagesLen = useRef(0);
   useEffect(() => {
     if (!isLoading && messages.length > prevMessagesLen.current) {
       const last = messages[messages.length - 1];
       if (last.role === 'assistant' && last.content) {
-        voice.speak(last.content);
+        const voiceMatch = last.content.match(/\[VOICE:\s*(.+?)\]/s);
+        if (voiceMatch) {
+          voice.speak(voiceMatch[1].trim());
+        }
+        // No fallback — don't read raw markdown/citations aloud
       }
+      prevMessagesLen.current = messages.length;
     }
-    prevMessagesLen.current = messages.length;
-  }, [isLoading, messages.length, voice]);
+  }, [isLoading, messages.length, voice.speak]);
 
   // Ctrl hold-to-talk
   useEffect(() => {
@@ -45,7 +56,7 @@ export default function ChatPage() {
       if (e.key === 'Control' && ctrlHeld.current) {
         ctrlHeld.current = false;
         const text = voice.stopListening();
-        if (text.trim()) sendMessage(text.trim());
+        if (text.trim()) wrappedSendMessage(text.trim());
       }
     }
     window.addEventListener('keydown', onKeyDown);
@@ -54,7 +65,7 @@ export default function ChatPage() {
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
     };
-  }, [voice.isSupported, voice.startListening, voice.stopListening, sendMessage]);
+  }, [voice.isSupported, voice.startListening, voice.stopListening, wrappedSendMessage]);
 
   if (loading) return null;
 
@@ -66,13 +77,15 @@ export default function ChatPage() {
           <span className="font-semibold text-slate-800 text-sm">CLA Knowledgebase</span>
           <NavTabs isAdmin={role === 'admin'} />
         </div>
-        <CourseBadges selected={courseFilter} onSelect={setCourseFilter} />
+        <div className="overflow-x-auto flex-shrink-0 max-w-[60vw] sm:max-w-none">
+          <CourseBadges selected={courseFilter} onSelect={setCourseFilter} />
+        </div>
       </header>
 
-      <ChatMessages messages={messages} />
+      <ChatMessages messages={messages} isLoading={isLoading} onSend={wrappedSendMessage} />
 
       <ChatInput
-        onSend={sendMessage}
+        onSend={wrappedSendMessage}
         isLoading={isLoading}
         voice={voice}
       />

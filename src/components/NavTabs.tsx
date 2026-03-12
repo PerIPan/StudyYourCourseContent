@@ -24,7 +24,7 @@ export function NavTabs({ isAdmin = false }: { isAdmin?: boolean }) {
         <Link
           key={tab.href}
           href={tab.href}
-          className={`px-4 py-2 text-sm border-b-2 transition-colors ${
+          className={`px-4 py-2 text-sm border-b-2 -mb-px transition-colors ${
             pathname === tab.href
               ? 'text-indigo-500 font-semibold border-indigo-500'
               : 'text-slate-500 border-transparent hover:text-slate-700'

@@ -3,14 +3,26 @@ import type { SourceCitation as Citation } from '@/types';
 export function SourceCitationBlock({ sources }: { sources: Citation[] }) {
   if (!sources?.length) return null;
 
+  const defaultOpen = sources.length === 1;
+
   return (
-    <div className="bg-slate-50 rounded-lg p-3 mt-3 text-xs">
-      <div className="text-slate-400 mb-1">Sources:</div>
-      {sources.map((s, i) => (
-        <div key={i} className="text-indigo-500">
-          {s.courseName} / Lecture {s.lectureNumber} / {s.filename}, p.{s.pageNumber}
-        </div>
-      ))}
-    </div>
+    <details className="mt-3" open={defaultOpen}>
+      <summary className="text-xs text-slate-400 cursor-pointer select-none list-none flex items-center gap-1 hover:text-slate-600 transition-colors">
+        <svg className="w-3 h-3 transition-transform details-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+        Sources ({sources.length})
+      </summary>
+      <div className="mt-2">
+        {sources.map((s, i) => (
+          <div key={i} className="bg-white border border-slate-100 rounded-lg px-3 py-2 mb-1">
+            <div className="font-medium text-slate-700 text-xs">{s.courseName}</div>
+            <div className="text-xs text-slate-400 truncate">
+              Lecture {s.lectureNumber} / {s.filename}, p.{s.pageNumber}
+            </div>
+          </div>
+        ))}
+      </div>
+    </details>
   );
 }

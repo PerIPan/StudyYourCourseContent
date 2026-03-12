@@ -35,10 +35,10 @@ export function CourseBadges({ selected, onSelect }: CourseBadgesProps) {
     <div className="flex gap-1.5">
       <button
         onClick={() => onSelect(null)}
-        className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors ${
+        className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors cursor-pointer ${
           selected === null
             ? 'bg-slate-200 text-slate-600 ring-2 ring-current ring-opacity-30'
-            : 'bg-slate-100 text-slate-600'
+            : 'bg-slate-100 text-slate-600 hover:ring-2 hover:ring-current hover:ring-opacity-20'
         }`}
       >
         All
@@ -49,10 +49,10 @@ export function CourseBadges({ selected, onSelect }: CourseBadgesProps) {
           <button
             key={c.slug}
             onClick={() => onSelect(c.slug)}
-            className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors ${
+            className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors cursor-pointer ${
               selected === c.slug
                 ? `${color.activeBg} ${color.text} ring-2 ring-current ring-opacity-30`
-                : `${color.bg} ${color.text}`
+                : `${color.bg} ${color.text} hover:ring-2 hover:ring-current hover:ring-opacity-20`
             }`}
           >
             {c.name}

@@ -26,9 +26,9 @@ export function LoginForm({ onLogin }: LoginFormProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_#e0e7ff_0%,_#f8fafc_60%)] flex items-center justify-center">
       <div className="text-center w-80">
-        <svg className="w-12 h-12 mx-auto mb-3 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+        <svg className="w-14 h-14 mx-auto mb-3 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
         <h1 className="text-xl font-bold text-slate-800 mb-1">CLA Knowledgebase</h1>
         <p className="text-sm text-slate-500 mb-8">Cybersecurity Leadership Academy</p>
 

@@ -83,7 +83,11 @@ export function ChatInput({ onSend, isLoading, voice }: ChatInputProps) {
           type="button"
           onClick={toggleMute}
           title={voice.autoReadAloud ? 'Mute voice' : 'Unmute voice'}
-          className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 border border-slate-200 text-slate-500 hover:bg-slate-100 transition-colors"
+          className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 border transition-colors ${
+            voice.autoReadAloud
+              ? 'border-slate-200 text-slate-500 hover:bg-slate-100'
+              : 'bg-slate-100 text-slate-300 border-slate-200'
+          }`}
         >
           {voice.autoReadAloud ? (
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -118,7 +122,7 @@ export function ChatInput({ onSend, isLoading, voice }: ChatInputProps) {
         </button>
       </form>
       <p className="text-center text-slate-400 text-[0.65rem] mt-1.5">
-        Hold mic or Ctrl to speak {voice.autoReadAloud ? '· answers read aloud' : '· voice muted'}
+        Hold mic or Ctrl to speak (Firefox not supported) {voice.autoReadAloud ? '· summary read aloud' : '· voice muted'}
       </p>
     </div>
   );

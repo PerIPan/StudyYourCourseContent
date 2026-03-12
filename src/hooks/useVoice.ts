@@ -5,11 +5,12 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 export function useVoice() {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [autoReadAloud, setAutoReadAloud] = useState(true);
+  const [autoReadAloud, setAutoReadAloud] = useState(false);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>('');
   const [isSupported, setIsSupported] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const transcriptRef = useRef('');
 
   useEffect(() => {
     setIsSupported('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
@@ -38,6 +39,14 @@ export function useVoice() {
   }, []);
 
   const startListening = useCallback(() => {
+    // Stop any ongoing TTS so mic doesn't pick it up
+    window.speechSynthesis.cancel();
+
+    // Guard against double-start (leaking zombie recognition)
+    if (recognitionRef.current) {
+      try { recognitionRef.current.stop(); } catch { /* already stopped */ }
+    }
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
@@ -48,7 +57,9 @@ export function useVoice() {
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       const result = event.results[event.results.length - 1];
-      setTranscript(result[0].transcript);
+      const text = result[0].transcript;
+      transcriptRef.current = text;
+      setTranscript(text);
     };
 
     recognition.onend = () => setIsListening(false);
@@ -57,17 +68,21 @@ export function useVoice() {
     recognitionRef.current = recognition;
     recognition.start();
     setIsListening(true);
+    transcriptRef.current = '';
     setTranscript('');
   }, []);
 
+  // Stable: reads from ref, no dependency on transcript state
   const stopListening = useCallback((): string => {
     recognitionRef.current?.stop();
+    recognitionRef.current = null;
     setIsListening(false);
-    return transcript;
-  }, [transcript]);
+    return transcriptRef.current;
+  }, []);
 
   const speak = useCallback((text: string) => {
     if (!autoReadAloud) return;
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1.0;
