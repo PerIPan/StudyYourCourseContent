@@ -6,7 +6,11 @@ import { EXAM_GENERATE_PROMPT, buildExamGenerateMessages } from '@/lib/prompts';
 import { formatContextForPrompt } from '@/lib/rag';
 import type { ChunkResult } from '@/types';
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+let _anthropic: Anthropic | null = null;
+function getAnthropic() {
+  if (!_anthropic) _anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  return _anthropic;
+}
 
 // Server-side store for rubrics + source chunks (prevents leaking to client)
 export const examStore = new Map<string, { rubric: string; sourceChunks: ChunkResult[]; expiresAt: number }>();
@@ -67,7 +71,7 @@ export async function POST(request: NextRequest) {
   const context = formatContextForPrompt(chunks);
   const userMessage = buildExamGenerateMessages(context, questionType);
 
-  const response = await anthropic.messages.create({
+  const response = await getAnthropic().messages.create({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 1024,
     system: EXAM_GENERATE_PROMPT,

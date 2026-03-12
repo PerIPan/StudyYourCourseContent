@@ -6,7 +6,11 @@ import { formatContextForPrompt, extractCitations } from '@/lib/rag';
 import { examStore } from '../generate/route';
 import type { ChunkResult } from '@/types';
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+let _anthropic: Anthropic | null = null;
+function getAnthropic() {
+  if (!_anthropic) _anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  return _anthropic;
+}
 
 export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
@@ -32,7 +36,7 @@ export async function POST(request: NextRequest) {
   const context = formatContextForPrompt(sourceChunks as ChunkResult[]);
   const citations = extractCitations(sourceChunks as ChunkResult[]);
 
-  const response = await anthropic.messages.create({
+  const response = await getAnthropic().messages.create({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 1500,
     system: EXAM_GRADE_PROMPT,

@@ -4,7 +4,11 @@ import Anthropic from '@anthropic-ai/sdk';
 import { retrieveContext, formatContextForPrompt, extractCitations } from '@/lib/rag';
 import { CHAT_SYSTEM_PROMPT } from '@/lib/prompts';
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+let _anthropic: Anthropic | null = null;
+function getAnthropic() {
+  if (!_anthropic) _anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  return _anthropic;
+}
 
 export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
@@ -31,7 +35,7 @@ export async function POST(request: NextRequest) {
   const context = formatContextForPrompt(chunks);
   const citations = extractCitations(chunks);
 
-  const stream = anthropic.messages.stream({
+  const stream = getAnthropic().messages.stream({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 2048,
     system: CHAT_SYSTEM_PROMPT,
