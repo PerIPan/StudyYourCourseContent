@@ -8,6 +8,7 @@ export function useVoice() {
   const [autoReadAloud, setAutoReadAloud] = useState(false);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>('');
+  const [rate, setRate] = useState(0.9);
   const [isSupported, setIsSupported] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const transcriptRef = useRef('');
@@ -25,8 +26,9 @@ export function useVoice() {
       setSelectedVoiceURI(prev => {
         if (prev) return prev;
         const english = available.filter(v => v.lang.startsWith('en'));
-        // Prefer premium/enhanced voices first (most natural), then standard
-        const pick = english.find(v => /premium/i.test(v.name))
+        // Prefer Rishi, then premium/enhanced voices (most natural), then standard
+        const pick = english.find(v => /rishi/i.test(v.name))
+          || english.find(v => /premium/i.test(v.name))
           || english.find(v => /enhanced/i.test(v.name))
           || english.find(v => v.name === 'Google UK English Female')
           || english.find(v => v.name === 'Google US English')
@@ -89,12 +91,12 @@ export function useVoice() {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.9;
+    utterance.rate = rate;
     utterance.pitch = 1.0;
     const v = voices.find(v => v.voiceURI === selectedVoiceURI);
     if (v) utterance.voice = v;
     window.speechSynthesis.speak(utterance);
-  }, [autoReadAloud, voices, selectedVoiceURI]);
+  }, [autoReadAloud, voices, selectedVoiceURI, rate]);
 
   const stopSpeaking = useCallback(() => {
     window.speechSynthesis.cancel();
@@ -113,5 +115,7 @@ export function useVoice() {
     voices,
     selectedVoiceURI,
     setSelectedVoiceURI,
+    rate,
+    setRate,
   };
 }

@@ -14,10 +14,11 @@ Rules:
 - Generate questions that test understanding, not just recall
 - The question should be answerable using the provided source material
 - Include enough context in the question for the student to understand what's expected
+- Use markdown formatting in the question text: paragraphs separated by blank lines, **bold** for emphasis, bullet points or numbered lists where appropriate
 
 You must respond with valid JSON in this exact format:
 {
-  "question": "the exam question text",
+  "question": "the exam question text (use markdown: paragraphs, **bold**, lists)",
   "rubric": "Internal grading rubric: list the key concepts that must be covered, the expected depth of analysis, and which specific source material supports each point. Score breakdown: [list points allocation]"
 }`;
 
@@ -29,13 +30,14 @@ Rules:
 - Clearly state what was correct and what was missed
 - Provide a model answer that references the source material
 - Be encouraging but honest
+- Use markdown formatting in all text fields: separate ideas into paragraphs, use **bold** for key terms, use bullet points or numbered lists for multiple points
 
 You must respond with valid JSON in this exact format:
 {
   "score": <number 1-10>,
-  "correct": "What the student got right",
-  "missing": "What was missed or incorrect",
-  "modelAnswer": "A thorough model answer with source references"
+  "correct": "What the student got right (use markdown: paragraphs, **bold**, lists)",
+  "missing": "What was missed or incorrect (use markdown: paragraphs, **bold**, lists)",
+  "modelAnswer": "A thorough model answer with source references (use markdown: paragraphs, **bold**, lists, headings)"
 }`;
 
 export function buildExamGenerateMessages(context: string, questionType: string) {
