@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import Anthropic from '@anthropic-ai/sdk';
 import { EXAM_GRADE_PROMPT } from '@/lib/prompts';
 import { formatContextForPrompt, extractCitations } from '@/lib/rag';
+import { generateText } from '@/lib/ai';
 import { examStore } from '../generate/route';
 import type { ChunkResult } from '@/types';
-
-let _anthropic: Anthropic | null = null;
-function getAnthropic() {
-  if (!_anthropic) _anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  return _anthropic;
-}
 
 export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
@@ -36,17 +30,10 @@ export async function POST(request: NextRequest) {
   const context = formatContextForPrompt(sourceChunks as ChunkResult[]);
   const citations = extractCitations(sourceChunks as ChunkResult[]);
 
-  const response = await getAnthropic().messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 1500,
-    system: EXAM_GRADE_PROMPT,
-    messages: [{
-      role: 'user',
-      content: `Question: ${question}\n\nRubric: ${rubric}\n\nSource material:\n${context}\n\nStudent answer:\n${studentAnswer}`,
-    }],
-  });
-
-  const text = response.content[0].type === 'text' ? response.content[0].text : '';
+  const text = await generateText(
+    EXAM_GRADE_PROMPT,
+    `Question: ${question}\n\nRubric: ${rubric}\n\nSource material:\n${context}\n\nStudent answer:\n${studentAnswer}`,
+  );
 
   try {
     const parsed = JSON.parse(text);

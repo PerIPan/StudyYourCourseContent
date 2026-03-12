@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import Anthropic from '@anthropic-ai/sdk';
 import { sql } from '@vercel/postgres';
 import { EXAM_GENERATE_PROMPT, buildExamGenerateMessages } from '@/lib/prompts';
 import { formatContextForPrompt } from '@/lib/rag';
+import { generateText } from '@/lib/ai';
 import type { ChunkResult } from '@/types';
-
-let _anthropic: Anthropic | null = null;
-function getAnthropic() {
-  if (!_anthropic) _anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  return _anthropic;
-}
 
 // Server-side store for rubrics + source chunks (prevents leaking to client)
 export const examStore = new Map<string, { rubric: string; sourceChunks: ChunkResult[]; expiresAt: number }>();
@@ -59,14 +53,7 @@ export async function POST(request: NextRequest) {
   const context = formatContextForPrompt(chunks);
   const userMessage = buildExamGenerateMessages(context, questionType);
 
-  const response = await getAnthropic().messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 1024,
-    system: EXAM_GENERATE_PROMPT,
-    messages: [{ role: 'user', content: userMessage }],
-  });
-
-  const text = response.content[0].type === 'text' ? response.content[0].text : '';
+  const text = await generateText(EXAM_GENERATE_PROMPT, userMessage, 1024);
 
   try {
     const parsed = JSON.parse(text);

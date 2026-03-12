@@ -1,14 +1,8 @@
 import { NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
-import Anthropic from '@anthropic-ai/sdk';
 import { retrieveContext, formatContextForPrompt, extractCitations } from '@/lib/rag';
 import { CHAT_SYSTEM_PROMPT } from '@/lib/prompts';
-
-let _anthropic: Anthropic | null = null;
-function getAnthropic() {
-  if (!_anthropic) _anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  return _anthropic;
-}
+import { streamText } from '@/lib/ai';
 
 export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
@@ -32,13 +26,6 @@ export async function POST(request: NextRequest) {
     ? `Context from course materials:\n\n${context}\n\n---\n\nStudent question: ${message}`
     : `No course materials matched this question. Answer using general knowledge and clearly disclose that.\n\nStudent question: ${message}`;
 
-  const stream = getAnthropic().messages.stream({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 2048,
-    system: CHAT_SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: userContent }],
-  });
-
   const encoder = new TextEncoder();
   const readable = new ReadableStream({
     async start(controller) {
@@ -46,12 +33,16 @@ export async function POST(request: NextRequest) {
         encoder.encode(`data: ${JSON.stringify({ type: 'citations', data: citations })}\n\n`)
       );
 
-      for await (const event of stream) {
-        if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+      try {
+        for await (const text of streamText(CHAT_SYSTEM_PROMPT, userContent)) {
           controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ type: 'text', data: event.delta.text })}\n\n`)
+            encoder.encode(`data: ${JSON.stringify({ type: 'text', data: text })}\n\n`)
           );
         }
+      } catch {
+        controller.enqueue(
+          encoder.encode(`data: ${JSON.stringify({ type: 'text', data: '\n\n⚠️ The AI service is temporarily busy. Please try again in a moment.' })}\n\n`)
+        );
       }
 
       controller.enqueue(encoder.encode('data: [DONE]\n\n'));
