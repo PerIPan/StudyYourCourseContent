@@ -39,6 +39,7 @@ export function NavTabs({ isAdmin = false }: { isAdmin?: boolean }) {
       >
         Logout
       </button>
+      <span className="ml-2 text-[0.6rem] text-slate-300">| no information is saved · Google Gemini is used</span>
     </div>
   );
 }

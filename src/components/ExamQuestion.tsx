@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 interface ExamQuestionProps {
   question: string;
@@ -24,7 +25,9 @@ export function ExamQuestion({ question, questionType, courseName, lectureScope,
 
       <div className="bg-white border border-slate-200 rounded-lg p-4 mb-4">
         <div className="text-xs font-semibold text-indigo-500 uppercase mb-2">Question</div>
-        <p className="text-sm text-slate-800 leading-relaxed">{question}</p>
+        <div className="prose prose-sm prose-slate max-w-none prose-p:my-2 prose-p:text-[0.95rem] prose-p:leading-relaxed prose-strong:text-slate-800 prose-ul:my-2 prose-ol:my-2 prose-li:text-[0.95rem]">
+          <ReactMarkdown>{question}</ReactMarkdown>
+        </div>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-lg p-4 mb-4">

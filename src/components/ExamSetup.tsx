@@ -95,6 +95,13 @@ export function ExamSetup({
         {loading ? 'Generating...' : 'Generate Question'}
       </button>
 
+      <div className="mt-6 bg-indigo-50 border border-indigo-100 rounded-lg p-4 text-xs text-slate-600 space-y-2">
+        <p className="font-semibold text-sm text-indigo-700">Exam Preparation Tips</p>
+        <p>Expect a mix of question types: some require <strong>short, direct answers</strong> (Knowledge / Comprehension), while others demand <strong>longer, structured responses</strong> demonstrating Analysis, Synthesis, and Evaluation.</p>
+        <p>For open-ended questions, there is no single perfect answer — variations are acceptable and encouraged, provided they are <strong>well-reasoned and grounded</strong> in the key concepts from your lectures and reading materials.</p>
+        <p>Your grade depends on your ability to <strong>interpret the question accurately</strong>, analyse the given situation, and <strong>effectively apply the theoretical concepts</strong> you have learned.</p>
+      </div>
+
       {sessionScore.count > 0 && (
         <div className="mt-6 bg-white border border-slate-200 rounded-lg p-3 flex justify-between items-center">
           <span className="text-sm text-slate-500">Session Score</span>

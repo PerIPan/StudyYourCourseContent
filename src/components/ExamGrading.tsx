@@ -1,5 +1,6 @@
 'use client';
 
+import ReactMarkdown from 'react-markdown';
 import { SourceCitationBlock } from './SourceCitation';
 import type { ExamGrade } from '@/types';
 
@@ -18,7 +19,9 @@ export function ExamGrading({ grade, question, onNext, onBack }: ExamGradingProp
     <div className="flex-1 overflow-y-auto p-4 max-w-2xl mx-auto w-full">
       <div className="bg-white border border-slate-200 rounded-lg p-4 mb-4">
         <div className="text-xs font-semibold text-indigo-500 uppercase mb-2">Question</div>
-        <p className="text-sm text-slate-600">{question}</p>
+        <div className="prose prose-sm prose-slate max-w-none prose-p:my-2 prose-p:text-[0.95rem] prose-p:leading-relaxed prose-strong:text-slate-800">
+          <ReactMarkdown>{question}</ReactMarkdown>
+        </div>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-lg p-4 mb-4">
@@ -29,17 +32,23 @@ export function ExamGrading({ grade, question, onNext, onBack }: ExamGradingProp
           </div>
         </div>
 
-        <div className="text-sm text-slate-700 leading-relaxed mb-3">
-          <strong className="text-emerald-600">Correct:</strong> {grade.correct}
+        <div className="mb-3">
+          <strong className="text-emerald-600 text-sm">Correct:</strong>
+          <div className="prose prose-sm prose-slate max-w-none prose-p:my-1.5 prose-p:text-[0.95rem] prose-p:leading-relaxed mt-1">
+            <ReactMarkdown>{grade.correct}</ReactMarkdown>
+          </div>
         </div>
-        <div className="text-sm text-slate-700 leading-relaxed">
-          <strong className="text-amber-600">Missing:</strong> {grade.missing}
+        <div>
+          <strong className="text-amber-600 text-sm">Missing:</strong>
+          <div className="prose prose-sm prose-slate max-w-none prose-p:my-1.5 prose-p:text-[0.95rem] prose-p:leading-relaxed mt-1">
+            <ReactMarkdown>{grade.missing}</ReactMarkdown>
+          </div>
         </div>
 
         <details className="mt-4">
           <summary className="text-sm text-indigo-500 cursor-pointer font-semibold">View model answer</summary>
-          <div className="mt-2 text-sm text-slate-600 leading-relaxed p-3 bg-slate-50 rounded-lg">
-            {grade.modelAnswer}
+          <div className="mt-2 p-3 bg-slate-50 rounded-lg prose prose-sm prose-slate max-w-none prose-p:my-2 prose-p:text-[0.95rem] prose-p:leading-relaxed prose-strong:text-slate-800 prose-ul:my-2 prose-ol:my-2">
+            <ReactMarkdown>{grade.modelAnswer}</ReactMarkdown>
           </div>
         </details>
 

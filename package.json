@@ -11,6 +11,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
     "@google/genai": "^1.44.0",
+    "@tailwindcss/typography": "^0.5.19",
     "@vercel/blob": "^2.3.1",
     "@vercel/postgres": "^0.10.0",
     "adm-zip": "^0.5.16",
@@ -24,6 +25,7 @@
     "pptx-parser": "^1.1.7-beta.9",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-markdown": "^10.1.0",
     "uuid": "^13.0.0"
   },
   "devDependencies": {

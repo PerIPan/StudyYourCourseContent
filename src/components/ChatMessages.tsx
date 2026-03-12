@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import type { ChatMessage } from '@/types';
 import { SourceCitationBlock } from './SourceCitation';
 
@@ -60,12 +61,27 @@ export function ChatMessages({ messages, isLoading, onSend }: ChatMessagesProps)
     <div className="flex-1 overflow-y-auto p-4 space-y-4">
       {messages.map((msg, i) => (
         <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-          <div className={`max-w-[85%] rounded-xl px-4 py-3 text-sm leading-relaxed ${
+          <div className={`max-w-[85%] rounded-xl px-5 py-4 ${
             msg.role === 'user'
-              ? 'bg-indigo-500 text-white rounded-br-none'
+              ? 'bg-indigo-500 text-white rounded-br-none text-[0.95rem] leading-relaxed'
               : 'bg-white text-slate-700 border border-slate-200 rounded-bl-none shadow-sm'
           }`}>
-            <div className="whitespace-pre-wrap">{msg.content}</div>
+            {msg.role === 'assistant' ? (
+              <div className="prose prose-sm prose-slate max-w-none
+                prose-p:my-2 prose-p:leading-relaxed prose-p:text-[0.95rem]
+                prose-headings:text-slate-800 prose-headings:mt-4 prose-headings:mb-2
+                prose-h3:text-base prose-h4:text-sm
+                prose-strong:text-slate-800 prose-strong:font-semibold
+                prose-ul:my-2 prose-ul:space-y-1 prose-ol:my-2 prose-ol:space-y-1
+                prose-li:text-[0.95rem] prose-li:leading-relaxed
+                prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:text-indigo-600
+                prose-a:text-indigo-500 prose-a:no-underline hover:prose-a:underline
+              ">
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              </div>
+            ) : (
+              <div className="whitespace-pre-wrap">{msg.content}</div>
+            )}
             {msg.role === 'assistant' && msg.sources && (
               <SourceCitationBlock sources={msg.sources} />
             )}

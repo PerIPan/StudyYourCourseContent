@@ -24,11 +24,15 @@ export function useVoice() {
       setVoices(available);
       setSelectedVoiceURI(prev => {
         if (prev) return prev;
-        const preferred = ['Samantha', 'Karen', 'Moira', 'Tessa', 'Fiona',
-          'Microsoft Zira', 'Google UK English Female', 'Google US English'];
         const english = available.filter(v => v.lang.startsWith('en'));
-        const pick = english.find(v => preferred.some(p => v.name.includes(p)))
-          || english.find(v => /female/i.test(v.name))
+        // Prefer premium/enhanced voices first (most natural), then standard
+        const pick = english.find(v => /premium/i.test(v.name))
+          || english.find(v => /enhanced/i.test(v.name))
+          || english.find(v => v.name === 'Google UK English Female')
+          || english.find(v => v.name === 'Google US English')
+          || english.find(v => /samantha/i.test(v.name))
+          || english.find(v => /daniel/i.test(v.name))
+          || english.find(v => /karen/i.test(v.name))
           || english[0];
         return pick?.voiceURI || '';
       });
@@ -85,7 +89,7 @@ export function useVoice() {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1.0;
+    utterance.rate = 0.9;
     utterance.pitch = 1.0;
     const v = voices.find(v => v.voiceURI === selectedVoiceURI);
     if (v) utterance.voice = v;
