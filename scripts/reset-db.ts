@@ -1,18 +1,23 @@
-import 'dotenv/config';
+import path from 'path';
+import { config } from 'dotenv';
 import { Pool } from 'pg';
 
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-});
+config({ path: path.resolve(__dirname, '../.env.local') });
 
-async function seed() {
+const pool = new Pool({ connectionString: process.env.POSTGRES_URL });
+
+async function reset() {
   const client = await pool.connect();
-
   try {
+    await client.query('DROP TABLE IF EXISTS chunks CASCADE');
+    await client.query('DROP TABLE IF EXISTS documents CASCADE');
+    await client.query('DROP TABLE IF EXISTS courses CASCADE');
+    console.log('Tables dropped');
+
     await client.query('CREATE EXTENSION IF NOT EXISTS vector');
 
     await client.query(`
-      CREATE TABLE IF NOT EXISTS courses (
+      CREATE TABLE courses (
         id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         slug VARCHAR(100) NOT NULL UNIQUE,
@@ -22,7 +27,7 @@ async function seed() {
     `);
 
     await client.query(`
-      CREATE TABLE IF NOT EXISTS documents (
+      CREATE TABLE documents (
         id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
         course_id UUID REFERENCES courses(id) NOT NULL,
         lecture_number INT NOT NULL,
@@ -36,40 +41,32 @@ async function seed() {
       )
     `);
 
-    await client.query('CREATE INDEX IF NOT EXISTS documents_course_id_idx ON documents(course_id)');
+    await client.query('CREATE INDEX documents_course_id_idx ON documents(course_id)');
 
     await client.query(`
-      CREATE TABLE IF NOT EXISTS chunks (
+      CREATE TABLE chunks (
         id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
         document_id UUID REFERENCES documents(id) ON DELETE CASCADE NOT NULL,
         content TEXT NOT NULL,
         embedding_vec vector(768),
         page_number INT NOT NULL,
         chunk_index INT NOT NULL,
+        course_slug VARCHAR(100),
         created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
       )
     `);
 
-    await client.query('CREATE INDEX IF NOT EXISTS chunks_document_id_idx ON chunks(document_id)');
-    // ivfflat index needs data to exist; use hnsw instead (works on empty tables)
+    await client.query('CREATE INDEX chunks_document_id_idx ON chunks(document_id)');
     await client.query(`
-      CREATE INDEX IF NOT EXISTS chunks_embedding_idx
+      CREATE INDEX chunks_embedding_idx
       ON chunks USING hnsw (embedding_vec vector_cosine_ops)
     `);
 
-    await client.query(`
-      INSERT INTO courses (name, slug) VALUES
-        ('Foundations 1', 'foundations'),
-        ('Strategy & Leadership', 'strategy'),
-        ('Threat Landscape', 'threat-landscape')
-      ON CONFLICT (slug) DO NOTHING
-    `);
-
-    console.log('Seeded courses and created tables');
+    console.log('Tables recreated with vector(768)');
   } finally {
     client.release();
     await pool.end();
   }
 }
 
-seed().catch(console.error);
+reset().catch(console.error);

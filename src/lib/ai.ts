@@ -30,8 +30,8 @@ export async function* streamText(system: string, userContent: string): AsyncGen
     for await (const chunk of response) {
       if (chunk.text) yield chunk.text;
     }
-  } catch {
-    // Fallback to Claude
+  } catch (err) {
+    console.error('[Gemini stream error, falling back to Claude]', err);
     const stream = getAnthropic().messages.stream({
       model: CLAUDE_MODEL,
       max_tokens: 2048,
@@ -58,8 +58,8 @@ export async function generateText(system: string, userContent: string, maxToken
       },
     });
     return response.text ?? '';
-  } catch {
-    // Fallback to Claude
+  } catch (err) {
+    console.error('[Gemini generate error, falling back to Claude]', err);
     const response = await getAnthropic().messages.create({
       model: CLAUDE_MODEL,
       max_tokens: maxTokens,

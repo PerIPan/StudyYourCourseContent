@@ -1,17 +1,20 @@
-import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 
-let _openai: OpenAI | null = null;
-function getOpenAI() {
-  if (!_openai) _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  return _openai;
+const EMBEDDING_MODEL = 'gemini-embedding-2-preview';
+
+let _ai: GoogleGenAI | null = null;
+function getAI() {
+  if (!_ai) _ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_AI_API_KEY });
+  return _ai;
 }
 
 export async function embedText(text: string): Promise<number[]> {
-  const response = await getOpenAI().embeddings.create({
-    model: 'text-embedding-3-small',
-    input: text,
+  const response = await getAI().models.embedContent({
+    model: EMBEDDING_MODEL,
+    contents: [text],
+    config: { outputDimensionality: 768 },
   });
-  return response.data[0].embedding;
+  return response.embeddings?.[0]?.values ?? [];
 }
 
 export async function embedBatch(texts: string[]): Promise<number[][]> {
@@ -20,11 +23,12 @@ export async function embedBatch(texts: string[]): Promise<number[][]> {
 
   for (let i = 0; i < texts.length; i += batchSize) {
     const batch = texts.slice(i, i + batchSize);
-    const response = await getOpenAI().embeddings.create({
-      model: 'text-embedding-3-small',
-      input: batch,
+    const response = await getAI().models.embedContent({
+      model: EMBEDDING_MODEL,
+      contents: batch,
+      config: { outputDimensionality: 768 },
     });
-    allEmbeddings.push(...response.data.map(d => d.embedding));
+    allEmbeddings.push(...(response.embeddings?.map(e => e.values ?? []) ?? []));
   }
 
   return allEmbeddings;

@@ -12,12 +12,12 @@ import fs from 'fs';
 import path from 'path';
 import { config } from 'dotenv';
 import { sql } from '@vercel/postgres';
-import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 
 // Load .env.local
 config({ path: path.resolve(__dirname, '../.env.local') });
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_AI_API_KEY });
 
 const SUPPORTED = new Set(['pdf', 'pptx', 'docx']);
 const TARGET_CHARS = 2000;
@@ -103,8 +103,12 @@ async function embedBatch(texts: string[]) {
   const all: number[][] = [];
   for (let i = 0; i < texts.length; i += 100) {
     const batch = texts.slice(i, i + 100);
-    const res = await openai.embeddings.create({ model: 'text-embedding-3-small', input: batch });
-    all.push(...res.data.map(d => d.embedding));
+    const res = await ai.models.embedContent({
+      model: 'gemini-embedding-2-preview',
+      contents: batch,
+      config: { outputDimensionality: 768 },
+    });
+    all.push(...(res.embeddings?.map(e => e.values ?? []) ?? []));
   }
   return all;
 }
