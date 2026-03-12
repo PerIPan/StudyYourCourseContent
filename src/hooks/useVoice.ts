@@ -8,7 +8,12 @@ export function useVoice() {
   const [autoReadAloud, setAutoReadAloud] = useState(true);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>('');
+  const [isSupported, setIsSupported] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  useEffect(() => {
+    setIsSupported('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -75,9 +80,6 @@ export function useVoice() {
   const stopSpeaking = useCallback(() => {
     window.speechSynthesis.cancel();
   }, []);
-
-  const isSupported = typeof window !== 'undefined' &&
-    ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
   return {
     isListening,

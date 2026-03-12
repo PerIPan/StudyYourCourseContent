@@ -31,6 +31,31 @@ export default function ChatPage() {
     prevMessagesLen.current = messages.length;
   }, [isLoading, messages.length, voice]);
 
+  // Ctrl hold-to-talk
+  useEffect(() => {
+    if (!voice.isSupported) return;
+    const ctrlHeld = { current: false };
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Control' && !ctrlHeld.current && !e.repeat) {
+        ctrlHeld.current = true;
+        voice.startListening();
+      }
+    }
+    function onKeyUp(e: KeyboardEvent) {
+      if (e.key === 'Control' && ctrlHeld.current) {
+        ctrlHeld.current = false;
+        const text = voice.stopListening();
+        if (text.trim()) sendMessage(text.trim());
+      }
+    }
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+    };
+  }, [voice.isSupported, voice.startListening, voice.stopListening, sendMessage]);
+
   if (loading) return null;
 
   return (

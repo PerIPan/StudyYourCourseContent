@@ -25,26 +25,18 @@ export async function POST(request: NextRequest) {
 
   const chunks = await retrieveContext(message, courseSlug || undefined);
 
-  if (chunks.length === 0) {
-    return Response.json({
-      content: "I couldn't find relevant information in the course materials. Try rephrasing or selecting a specific course.",
-      sources: [],
-    });
-  }
+  const context = chunks.length > 0 ? formatContextForPrompt(chunks) : '';
+  const citations = chunks.length > 0 ? extractCitations(chunks) : [];
 
-  const context = formatContextForPrompt(chunks);
-  const citations = extractCitations(chunks);
+  const userContent = context
+    ? `Context from course materials:\n\n${context}\n\n---\n\nStudent question: ${message}`
+    : `No course materials matched this question. Answer using general knowledge and clearly disclose that.\n\nStudent question: ${message}`;
 
   const stream = getAnthropic().messages.stream({
     model: 'claude-sonnet-4-6',
     max_tokens: 2048,
     system: CHAT_SYSTEM_PROMPT,
-    messages: [
-      {
-        role: 'user',
-        content: `Context from course materials:\n\n${context}\n\n---\n\nStudent question: ${message}`,
-      },
-    ],
+    messages: [{ role: 'user', content: userContent }],
   });
 
   const encoder = new TextEncoder();

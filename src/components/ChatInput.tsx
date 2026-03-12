@@ -118,7 +118,7 @@ export function ChatInput({ onSend, isLoading, voice }: ChatInputProps) {
         </button>
       </form>
       <p className="text-center text-slate-400 text-[0.65rem] mt-1.5">
-        Hold mic to speak {voice.autoReadAloud ? '- answers read aloud' : '- voice muted'}
+        Hold mic or Ctrl to speak {voice.autoReadAloud ? '· answers read aloud' : '· voice muted'}
       </p>
     </div>
   );
