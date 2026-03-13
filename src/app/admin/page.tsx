@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { NavTabs } from '@/components/NavTabs';
 import { AdminUpload } from '@/components/AdminUpload';
 import { AdminDocList } from '@/components/AdminDocList';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import type { AdminDoc } from '@/types';
 
 export default function AdminPage() {
@@ -38,21 +39,24 @@ export default function AdminPage() {
   return (
     <div className="h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-page)' }}>
       <header
-        className="border-b px-4 py-2 flex items-center gap-3"
+        className="border-b px-4 py-2 flex items-center justify-between"
         style={{ backgroundColor: 'var(--bg-header)', borderColor: 'var(--border)' }}
       >
-        <svg
-          className="w-5 h-5"
-          style={{ color: 'var(--text-muted)' }}
-          viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-        >
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-        </svg>
-        <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
-          CLA Knowledgebase
-        </span>
-        <NavTabs isAdmin={true} />
+        <div className="flex items-center gap-3">
+          <svg
+            className="w-5 h-5"
+            style={{ color: 'var(--text-muted)' }}
+            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
+            CLA Knowledgebase
+          </span>
+          <NavTabs isAdmin={true} />
+        </div>
+        <ThemeToggle />
       </header>
 
       <main className="flex-1 overflow-auto p-6 max-w-4xl mx-auto w-full">

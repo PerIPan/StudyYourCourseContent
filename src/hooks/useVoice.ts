@@ -8,7 +8,7 @@ export function useVoice() {
   const [autoReadAloud, setAutoReadAloud] = useState(false);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>('');
-  const [rate, setRate] = useState(1);
+  const [rate, setRate] = useState(0.92);
   const [isSupported, setIsSupported] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const transcriptRef = useRef('');

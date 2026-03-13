@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 export type Theme = 'light' | 'dark' | 'surprise';
 
 const STORAGE_KEY = 'cla-theme';
-const DEFAULT_THEME: Theme = 'light';
+const DEFAULT_THEME: Theme = 'dark';
 
 interface ThemeContextValue {
   theme: Theme;

@@ -13,7 +13,7 @@ interface ExamGradingProps {
 
 export function ExamGrading({ grade, question, onNext, onBack }: ExamGradingProps) {
   return (
-    <div className="flex-1 overflow-y-auto p-4 max-w-3xl mx-auto w-full">
+    <div className="flex-1 overflow-y-auto p-4 max-w-4xl mx-auto w-full">
       {/* Success banner */}
       <div
         className="rounded-lg p-4 mb-4 text-center border"

@@ -16,7 +16,7 @@ export function ExamQuestion({ question, questionType, courseName, lectureScope,
   const [answer, setAnswer] = useState('');
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 max-w-3xl mx-auto w-full">
+    <div className="flex-1 overflow-y-auto p-4 max-w-4xl mx-auto w-full">
       {/* Meta badges */}
       <div className="flex items-center gap-2 mb-4">
         <span

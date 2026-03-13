@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ThemeToggle } from './ThemeToggle';
 
 export function NavTabs({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
@@ -52,8 +51,6 @@ export function NavTabs({ isAdmin = false }: { isAdmin?: boolean }) {
       >
         | no information is saved · Google Gemini is used
       </span>
-      {/* Theme toggle lives here, after the nav items */}
-      <ThemeToggle />
     </div>
   );
 }

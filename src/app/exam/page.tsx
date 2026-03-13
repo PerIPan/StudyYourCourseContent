@@ -7,6 +7,7 @@ import { NavTabs } from '@/components/NavTabs';
 import { ExamSetup } from '@/components/ExamSetup';
 import { ExamQuestion } from '@/components/ExamQuestion';
 import { ExamGrading } from '@/components/ExamGrading';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import type { ExamQuestion as ExamQ, ExamGrade } from '@/types';
 
 type ExamState = 'setup' | 'question' | 'grading';
@@ -80,21 +81,24 @@ export default function ExamPage() {
   return (
     <div className="h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-page)' }}>
       <header
-        className="border-b px-4 py-2 flex items-center gap-3"
+        className="border-b px-4 py-2 flex items-center justify-between"
         style={{ backgroundColor: 'var(--bg-header)', borderColor: 'var(--border)' }}
       >
-        <svg
-          className="w-5 h-5"
-          style={{ color: 'var(--text-muted)' }}
-          viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-        >
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-        </svg>
-        <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
-          CLA Knowledgebase
-        </span>
-        <NavTabs isAdmin={role === 'admin'} />
+        <div className="flex items-center gap-3">
+          <svg
+            className="w-5 h-5"
+            style={{ color: 'var(--text-muted)' }}
+            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
+            CLA Knowledgebase
+          </span>
+          <NavTabs isAdmin={role === 'admin'} />
+        </div>
+        <ThemeToggle />
       </header>
 
       {errorMessage && (

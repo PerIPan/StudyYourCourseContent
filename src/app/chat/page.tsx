@@ -9,6 +9,7 @@ import { NavTabs } from '@/components/NavTabs';
 import { CourseBadges } from '@/components/CourseBadges';
 import { ChatMessages } from '@/components/ChatMessages';
 import { ChatInput } from '@/components/ChatInput';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function ChatPage() {
   const { role, loading } = useAuth();
@@ -109,6 +110,7 @@ export default function ChatPage() {
               </button>
             ))}
           </div>
+          <ThemeToggle />
         </div>
       </header>
 

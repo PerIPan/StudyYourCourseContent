@@ -71,7 +71,7 @@ export function ExamSetup({
   }
 
   return (
-    <div className="flex-1 p-6 max-w-2xl mx-auto w-full overflow-y-auto">
+    <div className="flex-1 p-6 max-w-4xl mx-auto w-full overflow-y-auto">
 
       {/* Course selector */}
       <div className="mb-5">
@@ -84,7 +84,7 @@ export function ExamSetup({
               <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
             <span
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+              className="absolute bottom-full left-0 mb-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md w-52 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
               style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-page)' }}
             >
               Select a course to avoid cross-course questions
@@ -141,7 +141,7 @@ export function ExamSetup({
               <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
             <span
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+              className="absolute bottom-full left-0 mb-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md w-56 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
               style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-page)' }}
             >
               Focus on a specific topic, e.g. &quot;risk management&quot;, &quot;CMM&quot;
@@ -151,7 +151,7 @@ export function ExamSetup({
         <textarea
           value={topicHint}
           onChange={e => setTopicHint(e.target.value)}
-          placeholder="e.g. risk management, zero trust, incident response..."
+          placeholder="e.g. risk management, CMM, Governance..."
           rows={2}
           className="w-full rounded-lg px-3 py-2 text-sm border-2 focus:outline-none transition-colors resize-none"
           style={{
