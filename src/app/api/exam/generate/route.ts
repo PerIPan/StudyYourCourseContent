@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const { courseSlug, questionType, topicHint } = await request.json();
+  const { courseSlug, questionType, topicHint, difficulty } = await request.json();
 
   let result;
   if (courseSlug) {
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
   }
 
   const context = formatContextForPrompt(chunks);
-  const userMessage = buildExamGenerateMessages(context, questionType, topicHint);
+  const userMessage = buildExamGenerateMessages(context, questionType, topicHint, difficulty);
 
   const text = await generateText(EXAM_GENERATE_PROMPT, userMessage, 1024);
 

@@ -38,7 +38,6 @@ export async function POST(request: NextRequest) {
   try {
     const parsed = JSON.parse(text);
     return NextResponse.json({
-      score: parsed.score,
       correct: parsed.correct,
       missing: parsed.missing,
       modelAnswer: parsed.modelAnswer,

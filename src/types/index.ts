@@ -51,7 +51,6 @@ export interface ExamQuestion {
 }
 
 export interface ExamGrade {
-  score: number;
   correct: string;
   missing: string;
   modelAnswer: string;

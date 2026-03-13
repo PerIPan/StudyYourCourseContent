@@ -21,9 +21,9 @@ export default function ExamPage() {
   const [topicHint, setTopicHint] = useState('');
   const [currentQuestion, setCurrentQuestion] = useState<ExamQ | null>(null);
   const [currentGrade, setCurrentGrade] = useState<ExamGrade | null>(null);
+  const [difficulty, setDifficulty] = useState('normal');
   const [generating, setGenerating] = useState(false);
   const [grading, setGrading] = useState(false);
-  const [sessionScore, setSessionScore] = useState({ total: 0, count: 0 });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function ExamPage() {
       const res = await fetch('/api/exam/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ courseSlug, questionType, topicHint: topicHint.trim() || undefined }),
+        body: JSON.stringify({ courseSlug, questionType, topicHint: topicHint.trim() || undefined, difficulty }),
       });
       if (!res.ok) throw new Error('Failed to generate');
       const data = await res.json();
@@ -67,7 +67,6 @@ export default function ExamPage() {
       if (!res.ok) throw new Error('Failed to grade');
       const grade = await res.json();
       setCurrentGrade(grade);
-      setSessionScore(prev => ({ total: prev.total + grade.score, count: prev.count + 1 }));
       setState('grading');
     } catch {
       setErrorMessage('Failed to grade answer.');
@@ -109,8 +108,8 @@ export default function ExamPage() {
           courseSlug={courseSlug} setCourseSlug={setCourseSlug}
           questionType={questionType} setQuestionType={setQuestionType}
           topicHint={topicHint} setTopicHint={setTopicHint}
+          difficulty={difficulty} setDifficulty={setDifficulty}
           onGenerate={handleGenerate} loading={generating}
-          sessionScore={sessionScore}
         />
       )}
 

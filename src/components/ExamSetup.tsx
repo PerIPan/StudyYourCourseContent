@@ -15,9 +15,10 @@ interface ExamSetupProps {
   setQuestionType: (t: string) => void;
   topicHint: string;
   setTopicHint: (t: string) => void;
+  difficulty: string;
+  setDifficulty: (d: string) => void;
   onGenerate: () => void;
   loading: boolean;
-  sessionScore: { total: number; count: number };
 }
 
 const QUESTION_TYPES = [
@@ -26,9 +27,16 @@ const QUESTION_TYPES = [
   { value: 'compare-contrast', label: 'Compare & Contrast' },
 ];
 
+const DIFFICULTY_LEVELS = [
+  { value: 'normal', label: 'Normal' },
+  { value: 'advanced', label: 'Advanced' },
+  { value: 'extreme', label: 'Extreme' },
+];
+
 export function ExamSetup({
   courseSlug, setCourseSlug,
-  questionType, setQuestionType, topicHint, setTopicHint, onGenerate, loading, sessionScore,
+  questionType, setQuestionType, topicHint, setTopicHint,
+  difficulty, setDifficulty, onGenerate, loading,
 }: ExamSetupProps) {
   const [courses, setCourses] = useState<Course[]>([]);
 
@@ -48,8 +56,8 @@ export function ExamSetup({
             onClick={() => setCourseSlug(null)}
             className={`text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors ${
               courseSlug === null
-                ? 'bg-indigo-50 text-indigo-600 border-indigo-500'
-                : 'bg-white text-slate-500 border-slate-200'
+                ? 'bg-black text-white border-red-500'
+                : 'bg-white text-gray-500 border-gray-300'
             }`}
           >
             All Courses
@@ -60,8 +68,8 @@ export function ExamSetup({
               onClick={() => setCourseSlug(c.slug)}
               className={`text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors ${
                 courseSlug === c.slug
-                  ? 'bg-indigo-50 text-indigo-600 border-indigo-500'
-                  : 'bg-white text-slate-500 border-slate-200'
+                  ? 'bg-black text-white border-black'
+                  : 'bg-white text-gray-500 border-gray-300'
               }`}
             >
               {c.name}
@@ -98,17 +106,36 @@ export function ExamSetup({
               <circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
             <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-slate-800 text-white text-[0.65rem] rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              Focus the question on a specific topic, e.g. &quot;risk management&quot; or &quot;zero trust&quot; | hope it works :)
+              Focus the question on a specific topic, e.g. &quot;risk management&quot;, &quot;CMM&quot; or &quot;Governance&quot;
             </span>
           </span>
         </div>
-        <input
-          type="text"
+        <textarea
           value={topicHint}
           onChange={e => setTopicHint(e.target.value)}
           placeholder="e.g. risk management, zero trust, incident response..."
-          className="w-full bg-white border-2 border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 placeholder:text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors"
+          rows={2}
+          className="w-full bg-white border-2 border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 placeholder:text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
         />
+      </div>
+
+      <div className="mb-6">
+        <div className="text-xs font-semibold text-slate-400 uppercase mb-2">Complexity</div>
+        <div className="flex gap-2 flex-wrap">
+          {DIFFICULTY_LEVELS.map(d => (
+            <button
+              key={d.value}
+              onClick={() => setDifficulty(d.value)}
+              className={`text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors ${
+                difficulty === d.value
+                  ? 'bg-indigo-50 text-indigo-600 border-indigo-500'
+                  : 'bg-white text-slate-500 border-slate-200'
+              }`}
+            >
+              {d.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <button
@@ -118,25 +145,6 @@ export function ExamSetup({
       >
         {loading ? 'Generating...' : 'Generate Question'}
       </button>
-
-      <div className="mt-6 bg-indigo-50 border border-indigo-100 rounded-lg p-4 text-xs text-slate-600 space-y-2">
-        <p className="font-semibold text-sm text-indigo-700">Exam Preparation Tips</p>
-        <p>Expect a mix of question types: some require <strong>short, direct answers</strong> (Knowledge / Comprehension), while others demand <strong>longer, structured responses</strong> demonstrating Analysis, Synthesis, and Evaluation.</p>
-        <p>For open-ended questions, there is no single perfect answer — variations are acceptable and encouraged, provided they are <strong>well-reasoned and grounded</strong> in the key concepts from your lectures and reading materials.</p>
-        <p>Your grade depends on your ability to <strong>interpret the question accurately</strong>, analyse the given situation, and <strong>effectively apply the theoretical concepts</strong> you have learned.</p>
-      </div>
-
-      {sessionScore.count > 0 && (
-        <div className="mt-6 bg-white border border-slate-200 rounded-lg p-3 flex justify-between items-center">
-          <span className="text-sm text-slate-500">Session Score</span>
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-slate-500">{sessionScore.count} questions</span>
-            <span className="text-lg font-bold text-emerald-600">
-              {(sessionScore.total / sessionScore.count).toFixed(1)} / 10
-            </span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
