@@ -22,7 +22,7 @@ export default function ExamPage() {
   const [topicHint, setTopicHint] = useState('');
   const [currentQuestion, setCurrentQuestion] = useState<ExamQ | null>(null);
   const [currentGrade, setCurrentGrade] = useState<ExamGrade | null>(null);
-  const [difficulty, setDifficulty] = useState('normal');
+  const [difficulty, setDifficulty] = useState('advanced');
   const [generating, setGenerating] = useState(false);
   const [grading, setGrading] = useState(false);
   const [skipped, setSkipped] = useState(false);
@@ -128,7 +128,10 @@ export default function ExamPage() {
 
       {state === 'setup' && (
         <ExamSetup
-          courseSlug={courseSlug} setCourseSlug={setCourseSlug}
+          courseSlug={courseSlug} setCourseSlug={(slug) => {
+            setCourseSlug(slug);
+            if (slug === 'cla-foundations-i') setQuestionType('scenario');
+          }}
           questionType={questionType} setQuestionType={setQuestionType}
           topicHint={topicHint} setTopicHint={setTopicHint}
           difficulty={difficulty} setDifficulty={setDifficulty}

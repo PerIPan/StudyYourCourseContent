@@ -112,7 +112,7 @@ export function ChatInput({ onSend, isLoading, voice }: ChatInputProps) {
         </div>
       )}
 
-      <p className="text-center text-[0.6rem] mb-1.5" style={{ color: 'var(--border-strong)' }}>
+      <p className="text-right text-[0.6rem] mb-1.5" style={{ color: 'var(--border-strong)' }}>
         no information is saved · Google Gemini is used
       </p>
 
@@ -144,6 +144,18 @@ export function ChatInput({ onSend, isLoading, voice }: ChatInputProps) {
           onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
           onBlur={e => (e.target.style.borderColor = 'var(--border)')}
         />
+
+        {/* Send button - 2x size, before sound/settings */}
+        <button
+          type="submit"
+          disabled={isLoading || !input.trim()}
+          className="theme-accent-btn w-20 h-20 rounded-full flex items-center justify-center flex-shrink-0 disabled:opacity-50 transition-colors text-2xl font-bold"
+          style={{ backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)' }}
+          onMouseEnter={e => ((e.currentTarget).style.backgroundColor = 'var(--accent-hover)')}
+          onMouseLeave={e => ((e.currentTarget).style.backgroundColor = 'var(--accent)')}
+        >
+          ↑
+        </button>
 
         {/* Mute / unmute TTS */}
         <button
@@ -187,17 +199,6 @@ export function ChatInput({ onSend, isLoading, voice }: ChatInputProps) {
             <circle cx="12" cy="12" r="3" />
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
           </svg>
-        </button>
-
-        <button
-          type="submit"
-          disabled={isLoading || !input.trim()}
-          className="theme-accent-btn w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 disabled:opacity-50 transition-colors"
-          style={{ backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)' }}
-          onMouseEnter={e => ((e.currentTarget).style.backgroundColor = 'var(--accent-hover)')}
-          onMouseLeave={e => ((e.currentTarget).style.backgroundColor = 'var(--accent)')}
-        >
-          ↑
         </button>
       </form>
 
