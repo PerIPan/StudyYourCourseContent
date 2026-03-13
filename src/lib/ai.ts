@@ -16,6 +16,21 @@ function getAnthropic() {
   return _anthropic;
 }
 
+/** Strip markdown code fences from LLM output so JSON.parse succeeds */
+export function sanitizeLLMJson(text: string): string {
+  let cleaned = text.trim();
+  // Strip ```json ... ``` or ``` ... ```
+  const fenceMatch = cleaned.match(/^```(?:json)?\s*\n?([\s\S]*?)\n?```$/);
+  if (fenceMatch) cleaned = fenceMatch[1].trim();
+  // Strip any leading non-JSON text before the first {
+  const firstBrace = cleaned.indexOf('{');
+  if (firstBrace > 0) cleaned = cleaned.slice(firstBrace);
+  // Strip any trailing text after the last }
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (lastBrace >= 0 && lastBrace < cleaned.length - 1) cleaned = cleaned.slice(0, lastBrace + 1);
+  return cleaned;
+}
+
 /** Streaming generation — Gemini primary, Claude fallback. Returns async iterable of text chunks. */
 export async function* streamText(system: string, userContent: string): AsyncGenerator<string> {
   try {
@@ -24,7 +39,7 @@ export async function* streamText(system: string, userContent: string): AsyncGen
       contents: [userContent],
       config: {
         systemInstruction: system,
-        maxOutputTokens: 2048,
+        maxOutputTokens: 4096,
       },
     });
     for await (const chunk of response) {
@@ -34,7 +49,7 @@ export async function* streamText(system: string, userContent: string): AsyncGen
     console.error('[Gemini stream error, falling back to Claude]', err);
     const stream = getAnthropic().messages.stream({
       model: CLAUDE_MODEL,
-      max_tokens: 2048,
+      max_tokens: 4096,
       system,
       messages: [{ role: 'user', content: userContent }],
     });
@@ -47,7 +62,7 @@ export async function* streamText(system: string, userContent: string): AsyncGen
 }
 
 /** Non-streaming generation — Gemini primary, Claude fallback. Returns full text. */
-export async function generateText(system: string, userContent: string, maxTokens: number = 1500): Promise<string> {
+export async function generateText(system: string, userContent: string, maxTokens: number = 4096): Promise<string> {
   try {
     const response = await getGemini().models.generateContent({
       model: GEMINI_MODEL,
@@ -66,6 +81,8 @@ export async function generateText(system: string, userContent: string, maxToken
       system,
       messages: [{ role: 'user', content: userContent }],
     });
-    return response.content[0].type === 'text' ? response.content[0].text : '';
+    // Handle multi-block responses — find the first text block
+    const textBlock = response.content.find(b => b.type === 'text');
+    return textBlock ? textBlock.text : '';
   }
 }

@@ -13,14 +13,6 @@ interface CourseBadgesProps {
   onSelect: (slug: string | null) => void;
 }
 
-const COLORS = [
-  { bg: 'bg-indigo-50', text: 'text-indigo-600', activeBg: 'bg-indigo-100' },
-  { bg: 'bg-emerald-50', text: 'text-emerald-600', activeBg: 'bg-emerald-100' },
-  { bg: 'bg-amber-50', text: 'text-amber-600', activeBg: 'bg-amber-100' },
-  { bg: 'bg-rose-50', text: 'text-rose-600', activeBg: 'bg-rose-100' },
-  { bg: 'bg-cyan-50', text: 'text-cyan-600', activeBg: 'bg-cyan-100' },
-];
-
 export function CourseBadges({ selected, onSelect }: CourseBadgesProps) {
   const [courses, setCourses] = useState<Course[]>([]);
 
@@ -35,30 +27,45 @@ export function CourseBadges({ selected, onSelect }: CourseBadgesProps) {
     <div className="flex gap-1.5">
       <button
         onClick={() => onSelect(null)}
-        className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors cursor-pointer ${
+        className="text-xs px-2.5 py-1 rounded-full font-semibold transition-colors cursor-pointer border"
+        style={
           selected === null
-            ? 'bg-slate-200 text-slate-600 ring-2 ring-current ring-opacity-30'
-            : 'bg-slate-100 text-slate-600 hover:ring-2 hover:ring-current hover:ring-opacity-20'
-        }`}
+            ? {
+                backgroundColor: 'var(--accent-subtle)',
+                color: 'var(--accent-text)',
+                borderColor: 'var(--accent)',
+              }
+            : {
+                backgroundColor: 'var(--bg-muted)',
+                color: 'var(--text-secondary)',
+                borderColor: 'var(--border)',
+              }
+        }
       >
         All
       </button>
-      {courses.map((c, i) => {
-        const color = COLORS[i % COLORS.length];
-        return (
-          <button
-            key={c.slug}
-            onClick={() => onSelect(c.slug)}
-            className={`text-xs px-2.5 py-1 rounded-full font-semibold transition-colors cursor-pointer ${
-              selected === c.slug
-                ? `${color.activeBg} ${color.text} ring-2 ring-current ring-opacity-30`
-                : `${color.bg} ${color.text} hover:ring-2 hover:ring-current hover:ring-opacity-20`
-            }`}
-          >
-            {c.name}
-          </button>
-        );
-      })}
+      {courses.map(c => (
+        <button
+          key={c.slug}
+          onClick={() => onSelect(c.slug)}
+          className="text-xs px-2.5 py-1 rounded-full font-semibold transition-colors cursor-pointer border"
+          style={
+            selected === c.slug
+              ? {
+                  backgroundColor: 'var(--tag-active-bg)',
+                  color: 'var(--tag-active-text)',
+                  borderColor: 'var(--tag-active-border)',
+                }
+              : {
+                  backgroundColor: 'var(--tag-bg)',
+                  color: 'var(--tag-text)',
+                  borderColor: 'var(--tag-border)',
+                }
+          }
+        >
+          {c.name}
+        </button>
+      ))}
     </div>
   );
 }

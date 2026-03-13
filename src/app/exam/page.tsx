@@ -78,21 +78,38 @@ export default function ExamPage() {
   if (loading) return null;
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-3">
-        <svg className="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <div className="h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-page)' }}>
+      <header
+        className="border-b px-4 py-2 flex items-center gap-3"
+        style={{ backgroundColor: 'var(--bg-header)', borderColor: 'var(--border)' }}
+      >
+        <svg
+          className="w-5 h-5"
+          style={{ color: 'var(--text-muted)' }}
+          viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+        >
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
-        <span className="font-semibold text-slate-800 text-sm">CLA Knowledgebase</span>
+        <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
+          CLA Knowledgebase
+        </span>
         <NavTabs isAdmin={role === 'admin'} />
       </header>
 
       {errorMessage && (
-        <div className="mx-4 mt-3 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm flex items-center justify-between">
+        <div
+          className="mx-4 mt-3 rounded-lg px-4 py-3 text-sm flex items-center justify-between border"
+          style={{
+            backgroundColor: 'var(--error-bg)',
+            borderColor: 'var(--error-border)',
+            color: 'var(--error-text)',
+          }}
+        >
           <span>{errorMessage}</span>
           <button
             onClick={() => setErrorMessage(null)}
-            className="ml-3 text-red-400 hover:text-red-600 transition-colors flex-shrink-0"
+            className="ml-3 flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity"
             aria-label="Dismiss error"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -7,6 +7,7 @@ export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [courseFilter, setCourseFilter] = useState<string | null>(null);
+  const [answerLength, setAnswerLength] = useState<'short' | 'normal'>('short');
 
   const sendMessage = useCallback(async (content: string) => {
     const userMessage: ChatMessage = { role: 'user', content };
@@ -17,7 +18,12 @@ export function useChat() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: content, courseSlug: courseFilter }),
+        body: JSON.stringify({
+          message: content,
+          courseSlug: courseFilter,
+          answerLength,
+          history: messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
+        }),
       });
 
       if (!res.ok) throw new Error('Chat request failed');
@@ -77,9 +83,9 @@ export function useChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [courseFilter]);
+  }, [courseFilter, answerLength]);
 
   const clearMessages = useCallback(() => setMessages([]), []);
 
-  return { messages, isLoading, sendMessage, clearMessages, courseFilter, setCourseFilter };
+  return { messages, isLoading, sendMessage, clearMessages, courseFilter, setCourseFilter, answerLength, setAnswerLength };
 }

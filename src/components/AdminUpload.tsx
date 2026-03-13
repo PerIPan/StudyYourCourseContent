@@ -22,7 +22,6 @@ interface FileStatus {
 function inferCourseName(file: File): string {
   const path = (file as File & { webkitRelativePath?: string }).webkitRelativePath || '';
   const parts = path.split('/').filter(Boolean);
-  // Use the top-level folder name as course
   if (parts.length >= 2) return parts[0].replace(/[-_]/g, ' ');
   return 'General';
 }
@@ -119,10 +118,19 @@ export function AdminUpload({ onUploaded }: AdminUploadProps) {
   const uniqueCourses = [...new Set(entries.map(e => e.courseName))];
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-4 mb-4">
-      <h3 className="font-semibold text-slate-800 text-sm mb-3">Upload Documents</h3>
-      <p className="text-slate-400 text-xs mb-3">
-        Select a folder — folder name becomes the course name. All files are treated holistically (no lecture splitting).
+    <div
+      className="theme-card rounded-lg p-4 mb-4 border"
+      style={{
+        backgroundColor: 'var(--bg-card)',
+        borderColor: 'var(--border)',
+        boxShadow: 'var(--shadow-card)',
+      }}
+    >
+      <h3 className="font-semibold text-sm mb-1" style={{ color: 'var(--text-primary)' }}>
+        Upload Documents
+      </h3>
+      <p className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>
+        Select a folder — folder name becomes the course name. All files are treated holistically.
       </p>
 
       {entries.length === 0 && !allDone && (
@@ -130,24 +138,29 @@ export function AdminUpload({ onUploaded }: AdminUploadProps) {
           <div
             onDrop={handleDrop}
             onDragOver={e => e.preventDefault()}
-            className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-400 transition-colors"
+            className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors"
+            style={{ borderColor: 'var(--border-strong)' }}
+            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.borderColor = 'var(--accent)')}
+            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.borderColor = 'var(--border-strong)')}
             onClick={() => folderRef.current?.click()}
           >
-            <p className="text-slate-400 text-sm">Click to select a course folder</p>
-            <p className="text-slate-300 text-xs mt-1">PDF, PPTX, DOCX — folder name = course name</p>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Click to select a course folder</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--border-strong)' }}>PDF, PPTX, DOCX — folder name = course name</p>
           </div>
 
           <div className="flex gap-2 mt-2">
             <button
               onClick={() => folderRef.current?.click()}
-              className="text-xs text-indigo-500 hover:text-indigo-700"
+              className="text-xs transition-opacity hover:opacity-70"
+              style={{ color: 'var(--accent-text)' }}
             >
               Select folder
             </button>
-            <span className="text-slate-300 text-xs">|</span>
+            <span className="text-xs" style={{ color: 'var(--border-strong)' }}>|</span>
             <button
               onClick={() => fileRef.current?.click()}
-              className="text-xs text-indigo-500 hover:text-indigo-700"
+              className="text-xs transition-opacity hover:opacity-70"
+              style={{ color: 'var(--accent-text)' }}
             >
               Select files
             </button>
@@ -176,28 +189,47 @@ export function AdminUpload({ onUploaded }: AdminUploadProps) {
       {entries.length > 0 && !uploading && !allDone && (
         <>
           {/* Bulk course name editor */}
-          <div className="flex items-center gap-2 mb-3 bg-indigo-50 rounded-lg px-3 py-2">
-            <span className="text-xs text-indigo-600 font-medium whitespace-nowrap">Course for all:</span>
+          <div
+            className="flex items-center gap-2 mb-3 rounded-lg px-3 py-2"
+            style={{ backgroundColor: 'var(--accent-subtle)' }}
+          >
+            <span className="text-xs font-medium whitespace-nowrap" style={{ color: 'var(--accent-text)' }}>
+              Course for all:
+            </span>
             <input
               type="text"
               value={uniqueCourses.length === 1 ? uniqueCourses[0] : ''}
               onChange={e => setAllCourseName(e.target.value)}
               placeholder={uniqueCourses.length > 1 ? 'Multiple courses detected' : 'Course name'}
-              className="flex-1 bg-white border border-indigo-200 rounded px-2 py-1 text-sm"
+              className="flex-1 rounded px-2 py-1 text-sm border"
+              style={{
+                backgroundColor: 'var(--bg-card)',
+                color: 'var(--text-primary)',
+                borderColor: 'var(--border)',
+              }}
             />
           </div>
 
           <div className="max-h-48 overflow-auto space-y-1 mb-3">
             {entries.map((entry, i) => (
-              <div key={i} className="flex items-center gap-2 text-sm bg-slate-50 rounded px-3 py-1.5">
-                <span className="text-slate-500 truncate flex-1" title={entry.file.name}>
+              <div
+                key={i}
+                className="flex items-center gap-2 text-sm rounded px-3 py-1.5"
+                style={{ backgroundColor: 'var(--bg-muted)' }}
+              >
+                <span className="truncate flex-1" style={{ color: 'var(--text-secondary)' }} title={entry.file.name}>
                   {entry.file.name}
                 </span>
                 <input
                   type="text"
                   value={entry.courseName}
                   onChange={e => updateCourseName(i, e.target.value)}
-                  className="bg-white border border-slate-200 rounded px-2 py-1 text-xs w-40"
+                  className="rounded px-2 py-1 text-xs w-40 border"
+                  style={{
+                    backgroundColor: 'var(--bg-card)',
+                    color: 'var(--text-primary)',
+                    borderColor: 'var(--border)',
+                  }}
                 />
               </div>
             ))}
@@ -206,13 +238,17 @@ export function AdminUpload({ onUploaded }: AdminUploadProps) {
           <div className="flex gap-2">
             <button
               onClick={handleUploadAll}
-              className="bg-indigo-500 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-indigo-600"
+              className="theme-accent-btn rounded-lg px-4 py-2 text-sm font-semibold transition-colors"
+              style={{ backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)' }}
+              onMouseEnter={e => ((e.currentTarget).style.backgroundColor = 'var(--accent-hover)')}
+              onMouseLeave={e => ((e.currentTarget).style.backgroundColor = 'var(--accent)')}
             >
               Upload {entries.length} file{entries.length > 1 ? 's' : ''}
             </button>
             <button
               onClick={() => { setEntries([]); setFileStatuses([]); }}
-              className="text-slate-400 hover:text-slate-600 text-sm px-3"
+              className="text-sm px-3 transition-opacity hover:opacity-70"
+              style={{ color: 'var(--text-muted)' }}
             >
               Cancel
             </button>
@@ -224,23 +260,34 @@ export function AdminUpload({ onUploaded }: AdminUploadProps) {
         <div className="space-y-1 mt-3">
           {fileStatuses.map((fs, i) => (
             <div key={i} className="flex items-center gap-2 text-sm">
-              <span className={
-                fs.state === 'done' ? 'text-emerald-500' :
-                fs.state === 'error' ? 'text-red-500' :
-                fs.state === 'uploading' ? 'text-indigo-500 animate-pulse' :
-                'text-slate-400'
-              }>
+              <span style={{
+                color: fs.state === 'done' ? '#10b981'
+                  : fs.state === 'error' ? '#ef4444'
+                  : fs.state === 'uploading' ? 'var(--accent)'
+                  : 'var(--text-muted)',
+              }}
+                className={fs.state === 'uploading' ? 'animate-pulse' : ''}
+              >
                 {fs.state === 'done' ? '✓' : fs.state === 'error' ? '✗' : fs.state === 'uploading' ? '⟳' : '○'}
               </span>
-              <span className="text-slate-700 truncate max-w-[200px]">{fs.name}</span>
-              <span className="text-slate-400 text-xs">{fs.courseName}</span>
-              {fs.info && <span className="text-slate-400 text-xs">— {fs.info}</span>}
+              <span className="truncate max-w-[200px]" style={{ color: 'var(--text-primary)' }}>
+                {fs.name}
+              </span>
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                {fs.courseName}
+              </span>
+              {fs.info && (
+                <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                  — {fs.info}
+                </span>
+              )}
             </div>
           ))}
           {allDone && (
             <button
               onClick={() => { setEntries([]); setFileStatuses([]); }}
-              className="mt-2 text-xs text-indigo-500 hover:text-indigo-700"
+              className="mt-2 text-xs transition-opacity hover:opacity-70"
+              style={{ color: 'var(--accent-text)' }}
             >
               Upload more
             </button>

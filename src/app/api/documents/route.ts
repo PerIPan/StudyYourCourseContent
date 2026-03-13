@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { sql } from '@vercel/postgres';
+import { verifyCookie } from '@/lib/auth';
 
 export async function GET() {
   const cookieStore = await cookies();
   const auth = cookieStore.get('cla-auth');
-  if (auth?.value !== 'admin') {
+  if (!auth || verifyCookie(auth.value) !== 'admin') {
     return new Response('Admin access required', { status: 403 });
   }
 
@@ -22,15 +23,15 @@ export async function GET() {
 export async function DELETE(request: NextRequest) {
   const cookieStore = await cookies();
   const auth = cookieStore.get('cla-auth');
-  if (auth?.value !== 'admin') {
+  if (!auth || verifyCookie(auth.value) !== 'admin') {
     return new Response('Admin access required', { status: 403 });
   }
 
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
 
-  if (!id) {
-    return NextResponse.json({ error: 'id required' }, { status: 400 });
+  if (!id || !/^[0-9a-f-]+$/i.test(id)) {
+    return NextResponse.json({ error: 'Valid id required' }, { status: 400 });
   }
 
   await sql`DELETE FROM documents WHERE id = ${id}`;

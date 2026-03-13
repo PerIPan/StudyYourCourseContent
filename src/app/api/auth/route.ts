@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { signCookie, verifyCookie } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
-  const { password } = await request.json();
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
+
+  const { password } = body;
 
   let role: 'admin' | 'student';
   if (password === process.env.ADMIN_PASSWORD) {
@@ -14,7 +22,7 @@ export async function POST(request: NextRequest) {
   }
 
   const cookieStore = await cookies();
-  cookieStore.set('cla-auth', role, {
+  cookieStore.set('cla-auth', signCookie(role), {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
@@ -29,11 +37,16 @@ export async function GET() {
   const cookieStore = await cookies();
   const auth = cookieStore.get('cla-auth');
 
-  if (!auth || !['student', 'admin'].includes(auth.value)) {
+  if (!auth) {
     return NextResponse.json({ role: null }, { status: 401 });
   }
 
-  return NextResponse.json({ role: auth.value });
+  const role = verifyCookie(auth.value);
+  if (!role || !['student', 'admin'].includes(role)) {
+    return NextResponse.json({ role: null }, { status: 401 });
+  }
+
+  return NextResponse.json({ role });
 }
 
 export async function DELETE() {

@@ -13,7 +13,7 @@ import { ChatInput } from '@/components/ChatInput';
 export default function ChatPage() {
   const { role, loading } = useAuth();
   const router = useRouter();
-  const { messages, isLoading, sendMessage, courseFilter, setCourseFilter } = useChat();
+  const { messages, isLoading, sendMessage, courseFilter, setCourseFilter, answerLength, setAnswerLength } = useChat();
   const voice = useVoice();
 
   useEffect(() => {
@@ -36,7 +36,6 @@ export default function ChatPage() {
         if (voiceMatch) {
           voice.speak(voiceMatch[1].trim());
         }
-        // No fallback — don't read raw markdown/citations aloud
       }
       prevMessagesLen.current = messages.length;
     }
@@ -70,19 +69,50 @@ export default function ChatPage() {
   if (loading) return null;
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-4 py-2 flex items-center justify-between">
+    <div className="h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-page)' }}>
+      <header
+        className="border-b px-4 py-2 flex items-center justify-between"
+        style={{ backgroundColor: 'var(--bg-header)', borderColor: 'var(--border)' }}
+      >
         <div className="flex items-center gap-3">
-          <svg className="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-          <span className="font-semibold text-slate-800 text-sm">CLA Knowledgebase</span>
+          <svg
+            className="w-5 h-5"
+            style={{ color: 'var(--text-muted)' }}
+            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
+            CLA Knowledgebase
+          </span>
           <NavTabs isAdmin={role === 'admin'} />
         </div>
-        <div className="overflow-x-auto flex-shrink-0 max-w-[60vw] sm:max-w-none">
+        <div className="flex items-center gap-3 overflow-x-auto flex-shrink-0 max-w-[60vw] sm:max-w-none">
           <CourseBadges selected={courseFilter} onSelect={setCourseFilter} />
+          <div
+            className="flex items-center rounded-full p-0.5 text-xs font-medium flex-shrink-0"
+            style={{ backgroundColor: 'var(--bg-muted)', border: '1px solid var(--border)' }}
+          >
+            {(['short', 'normal'] as const).map((opt) => (
+              <button
+                key={opt}
+                onClick={() => setAnswerLength(opt)}
+                className="px-3 py-1 rounded-full capitalize transition-colors"
+                style={
+                  answerLength === opt
+                    ? { backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)' }
+                    : { color: 'var(--text-secondary)' }
+                }
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
-      <ChatMessages messages={messages} isLoading={isLoading} onSend={wrappedSendMessage} />
+      <ChatMessages messages={messages} isLoading={isLoading} />
 
       <ChatInput
         onSend={wrappedSendMessage}

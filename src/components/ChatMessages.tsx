@@ -5,19 +5,12 @@ import ReactMarkdown from 'react-markdown';
 import type { ChatMessage } from '@/types';
 import { SourceCitationBlock } from './SourceCitation';
 
-const SUGGESTIONS = [
-  'Explain zero trust architecture',
-  'What are the key cyber threat categories?',
-  'Summarize risk management frameworks',
-];
-
 interface ChatMessagesProps {
   messages: ChatMessage[];
   isLoading?: boolean;
-  onSend: (msg: string) => void;
 }
 
-export function ChatMessages({ messages, isLoading, onSend }: ChatMessagesProps) {
+export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,62 +18,67 @@ export function ChatMessages({ messages, isLoading, onSend }: ChatMessagesProps)
   }, [messages, isLoading]);
 
   if (messages.length === 0) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 p-4">
-        <div className="bg-indigo-50 border border-indigo-100 rounded-lg px-4 py-3 text-xs text-indigo-600 max-w-sm w-full text-center">
-          <svg
-            className="w-10 h-10 mx-auto mb-2 text-indigo-400"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-          </svg>
-          <p className="font-semibold text-sm text-indigo-700 mb-1">What do you want to study today?</p>
-          <p>💡 Hold the mic button or press Ctrl to speak · unmute 🔊 to hear summaries read aloud</p>
-        </div>
-        <div className="flex flex-wrap gap-2 justify-center max-w-sm w-full">
-          {SUGGESTIONS.map(s => (
-            <button
-              key={s}
-              onClick={() => onSend(s)}
-              className="bg-white border border-slate-200 rounded-full px-4 py-2 text-sm hover:border-indigo-300 hover:text-indigo-600 cursor-pointer transition-colors"
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-      </div>
-    );
+    return <div className="flex-1" />;
   }
 
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4">
       {messages.map((msg, i) => (
         <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-          <div className={`max-w-[85%] rounded-xl px-5 py-4 ${
-            msg.role === 'user'
-              ? 'bg-indigo-500 text-white rounded-br-none text-[0.95rem] leading-relaxed'
-              : 'bg-white text-slate-700 border border-slate-200 rounded-bl-none shadow-sm'
-          }`}>
+          <div
+            className="max-w-[85%] rounded-xl px-5 py-4"
+            style={
+              msg.role === 'user'
+                ? {
+                    backgroundColor: 'var(--user-bubble)',
+                    color: 'var(--user-bubble-text)',
+                    borderBottomRightRadius: '4px',
+                  }
+                : {
+                    backgroundColor: 'var(--assistant-bubble)',
+                    color: 'var(--assistant-bubble-text)',
+                    border: '1px solid var(--border)',
+                    borderBottomLeftRadius: '4px',
+                    boxShadow: 'var(--shadow-card)',
+                  }
+            }
+          >
             {msg.role === 'assistant' ? (
-              <div className="prose prose-sm prose-slate max-w-none
-                prose-p:my-2 prose-p:leading-relaxed prose-p:text-[0.95rem]
-                prose-headings:text-slate-800 prose-headings:mt-4 prose-headings:mb-2
-                prose-h3:text-base prose-h4:text-sm
-                prose-strong:text-slate-800 prose-strong:font-semibold
-                prose-ul:my-2 prose-ul:space-y-1 prose-ol:my-2 prose-ol:space-y-1
-                prose-li:text-[0.95rem] prose-li:leading-relaxed
-                prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:text-indigo-600
-                prose-a:text-indigo-500 prose-a:no-underline hover:prose-a:underline
-              ">
+              <div
+                className="prose prose-sm max-w-none
+                  prose-p:my-2 prose-p:leading-relaxed prose-p:text-[0.95rem]
+                  prose-headings:mt-4 prose-headings:mb-2
+                  prose-h3:text-base prose-h4:text-sm
+                  prose-strong:font-semibold
+                  prose-ul:my-2 prose-ul:space-y-1 prose-ol:my-2 prose-ol:space-y-1
+                  prose-li:text-[0.95rem] prose-li:leading-relaxed
+                  prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs
+                  prose-a:no-underline hover:prose-a:underline
+                "
+                style={{
+                  /* Override prose defaults with theme vars */
+                  ['--tw-prose-body' as string]: 'var(--prose-body)',
+                  ['--tw-prose-headings' as string]: 'var(--prose-headings)',
+                  ['--tw-prose-bold' as string]: 'var(--prose-strong)',
+                  ['--tw-prose-links' as string]: 'var(--prose-link)',
+                  ['--tw-prose-code' as string]: 'var(--prose-code-text)',
+                  ['--tw-prose-bullets' as string]: 'var(--text-muted)',
+                  ['--tw-prose-counters' as string]: 'var(--text-muted)',
+                }}
+              >
+                <style>{`
+                  .prose code { background: var(--prose-code-bg); color: var(--prose-code-text); }
+                  .prose a { color: var(--prose-link); }
+                  .prose strong { color: var(--prose-strong); }
+                  .prose h1, .prose h2, .prose h3, .prose h4 { color: var(--prose-headings); }
+                  .prose p, .prose li { color: var(--prose-body); }
+                `}</style>
                 <ReactMarkdown>{msg.content}</ReactMarkdown>
               </div>
             ) : (
-              <div className="whitespace-pre-wrap">{msg.content}</div>
+              <div className="whitespace-pre-wrap text-[0.95rem] leading-relaxed">
+                {msg.content}
+              </div>
             )}
             {msg.role === 'assistant' && msg.sources && (
               <SourceCitationBlock sources={msg.sources} />
@@ -90,10 +88,24 @@ export function ChatMessages({ messages, isLoading, onSend }: ChatMessagesProps)
       ))}
       {isLoading && (
         <div className="flex justify-start">
-          <div className="bg-white border border-slate-200 rounded-xl rounded-bl-none shadow-sm px-4 py-3 flex gap-1">
-            <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-            <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-            <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          <div
+            className="rounded-xl rounded-bl-sm px-4 py-3 flex gap-1 border"
+            style={{
+              backgroundColor: 'var(--assistant-bubble)',
+              borderColor: 'var(--border)',
+              boxShadow: 'var(--shadow-card)',
+            }}
+          >
+            {[0, 150, 300].map(delay => (
+              <span
+                key={delay}
+                className="loading-dot w-2 h-2 rounded-full animate-bounce"
+                style={{
+                  backgroundColor: 'var(--loading-dot)',
+                  animationDelay: `${delay}ms`,
+                }}
+              />
+            ))}
           </div>
         </div>
       )}

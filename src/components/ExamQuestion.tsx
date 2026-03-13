@@ -16,35 +16,90 @@ export function ExamQuestion({ question, questionType, courseName, lectureScope,
   const [answer, setAnswer] = useState('');
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 max-w-2xl mx-auto w-full">
+    <div className="flex-1 overflow-y-auto p-4 max-w-3xl mx-auto w-full">
+      {/* Meta badges */}
       <div className="flex items-center gap-2 mb-4">
-        <span className="bg-indigo-50 text-indigo-600 text-xs px-2.5 py-0.5 rounded-full font-semibold">{courseName}</span>
-        {lectureScope && <span className="text-xs text-slate-500">Lecture {lectureScope}</span>}
-        <span className="text-xs text-slate-400">{questionType}</span>
+        <span
+          className="text-xs px-2.5 py-0.5 rounded-full font-semibold"
+          style={{
+            backgroundColor: 'var(--accent-subtle)',
+            color: 'var(--accent-text)',
+          }}
+        >
+          {courseName}
+        </span>
+        {lectureScope && (
+          <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+            Lecture {lectureScope}
+          </span>
+        )}
+        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{questionType}</span>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-lg p-4 mb-4">
-        <div className="text-xs font-semibold text-indigo-500 uppercase mb-2">Question</div>
-        <div className="prose prose-sm prose-slate max-w-none prose-p:my-2 prose-p:text-[0.95rem] prose-p:leading-relaxed prose-strong:text-slate-800 prose-ul:my-2 prose-ol:my-2 prose-li:text-[0.95rem]">
+      {/* Question card */}
+      <div
+        className="theme-card rounded-lg p-4 mb-4 border"
+        style={{
+          backgroundColor: 'var(--bg-card)',
+          borderColor: 'var(--border)',
+          boxShadow: 'var(--shadow-card)',
+        }}
+      >
+        <div className="text-xs font-semibold uppercase mb-2" style={{ color: 'var(--accent-text)' }}>
+          Question
+        </div>
+        <div
+          className="prose prose-sm max-w-none prose-p:my-2 prose-p:text-[0.95rem] prose-p:leading-relaxed prose-strong:font-semibold prose-ul:my-2 prose-ol:my-2 prose-li:text-[0.95rem]"
+          style={{
+            ['--tw-prose-body' as string]: 'var(--prose-body)',
+            ['--tw-prose-headings' as string]: 'var(--prose-headings)',
+            ['--tw-prose-bold' as string]: 'var(--prose-strong)',
+          }}
+        >
+          <style>{`
+            .prose p, .prose li { color: var(--prose-body); }
+            .prose strong { color: var(--prose-strong); }
+            .prose h1, .prose h2, .prose h3, .prose h4 { color: var(--prose-headings); }
+          `}</style>
           <ReactMarkdown>{question}</ReactMarkdown>
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-lg p-4 mb-4">
-        <div className="text-xs font-semibold text-slate-400 uppercase mb-2">Your Answer</div>
+      {/* Answer card */}
+      <div
+        className="theme-card rounded-lg p-4 mb-4 border"
+        style={{
+          backgroundColor: 'var(--bg-card)',
+          borderColor: 'var(--border)',
+          boxShadow: 'var(--shadow-card)',
+        }}
+      >
+        <div className="text-xs font-semibold uppercase mb-2" style={{ color: 'var(--text-muted)' }}>
+          Your Answer
+        </div>
         <textarea
           value={answer}
           onChange={e => setAnswer(e.target.value)}
           placeholder="Type your answer here..."
-          rows={8}
-          className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm text-slate-800 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          rows={12}
+          className="w-full rounded-lg p-3 text-sm border focus:outline-none transition-colors resize-none"
+          style={{
+            backgroundColor: 'var(--bg-input)',
+            color: 'var(--text-primary)',
+            borderColor: 'var(--border)',
+          }}
+          onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
+          onBlur={e => (e.target.style.borderColor = 'var(--border)')}
         />
       </div>
 
       <button
         onClick={() => onSubmit(answer)}
         disabled={loading || !answer.trim()}
-        className="w-full bg-indigo-500 text-white rounded-lg py-3 font-semibold text-sm hover:bg-indigo-600 disabled:opacity-50 transition-colors"
+        className="theme-accent-btn w-full rounded-lg py-3 font-semibold text-sm disabled:opacity-50 transition-colors"
+        style={{ backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)' }}
+        onMouseEnter={e => ((e.currentTarget).style.backgroundColor = 'var(--accent-hover)')}
+        onMouseLeave={e => ((e.currentTarget).style.backgroundColor = 'var(--accent)')}
       >
         {loading ? 'Grading...' : 'Submit Answer'}
       </button>

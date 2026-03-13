@@ -20,12 +20,23 @@ export function VoiceButton({ isListening, isSupported, onMouseDown, onMouseUp }
       onTouchEnd={onMouseUp}
       onTouchCancel={onMouseUp}
       aria-label="Hold to talk"
-      className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
-        isListening
-          ? 'bg-red-100 text-red-500 ring-2 ring-red-300 animate-pulse'
-          : 'bg-slate-100 text-slate-400 border border-slate-200 hover:bg-slate-200'
-      }`}
       title="Hold to talk"
+      className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors border ${
+        isListening ? 'animate-pulse' : ''
+      }`}
+      style={
+        isListening
+          ? {
+              backgroundColor: 'rgba(239,68,68,0.1)',
+              color: '#ef4444',
+              borderColor: 'rgba(239,68,68,0.4)',
+            }
+          : {
+              backgroundColor: 'var(--bg-muted)',
+              color: 'var(--text-muted)',
+              borderColor: 'var(--border)',
+            }
+      }
     >
       <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />

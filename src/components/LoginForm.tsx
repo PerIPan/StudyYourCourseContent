@@ -26,26 +26,66 @@ export function LoginForm({ onLogin }: LoginFormProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_#e0e7ff_0%,_#f8fafc_60%)] flex items-center justify-center">
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ background: 'var(--login-gradient)' }}
+    >
       <div className="text-center w-80">
-        <svg className="w-14 h-14 mx-auto mb-3 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-        <h1 className="text-xl font-bold text-slate-800 mb-1">CLA Knowledgebase</h1>
-        <p className="text-sm text-slate-500 mb-8">Cybersecurity Leadership Academy</p>
+        <svg
+          className="w-14 h-14 mx-auto mb-3"
+          style={{ color: 'var(--accent)' }}
+          viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        <h1 className="text-xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
+          CLA Knowledgebase
+        </h1>
+        <p className="text-sm mb-8" style={{ color: 'var(--text-secondary)' }}>
+          Cybersecurity Leadership Academy
+        </p>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+        <form
+          onSubmit={handleSubmit}
+          className="theme-card rounded-xl p-6 border"
+          style={{
+            backgroundColor: 'var(--bg-card)',
+            borderColor: 'var(--border)',
+            boxShadow: 'var(--shadow-card)',
+          }}
+        >
           <input
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             placeholder="Enter class password"
-            className="w-full bg-slate-50 text-slate-800 border border-slate-200 rounded-lg px-4 py-3 mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="theme-input w-full border rounded-lg px-4 py-3 mb-4 text-sm focus:outline-none focus:ring-2 transition-colors"
+            style={{
+              backgroundColor: 'var(--bg-input)',
+              color: 'var(--text-primary)',
+              borderColor: 'var(--border)',
+              // ring color via focus style — handled via accent
+            }}
+            onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
+            onBlur={e => (e.target.style.borderColor = 'var(--border)')}
             autoFocus
           />
-          {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+          {error && (
+            <p className="text-sm mb-3" style={{ color: 'var(--error-text)' }}>
+              {error}
+            </p>
+          )}
           <button
             type="submit"
             disabled={loading || !password}
-            className="w-full bg-indigo-500 text-white rounded-lg py-3 font-semibold text-sm hover:bg-indigo-600 disabled:opacity-50 transition-colors"
+            className="theme-accent-btn w-full rounded-lg py-3 font-semibold text-sm disabled:opacity-50 transition-colors"
+            style={{
+              backgroundColor: 'var(--accent)',
+              color: 'var(--text-on-accent)',
+            }}
+            onMouseEnter={e => ((e.target as HTMLButtonElement).style.backgroundColor = 'var(--accent-hover)')}
+            onMouseLeave={e => ((e.target as HTMLButtonElement).style.backgroundColor = 'var(--accent)')}
           >
             {loading ? 'Checking...' : 'Enter'}
           </button>

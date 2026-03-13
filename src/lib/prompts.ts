@@ -57,7 +57,9 @@ export function buildExamGenerateMessages(context: string, questionType: string,
     'extreme': 'Difficulty: Extreme — a challenging question requiring synthesis across topics, critical evaluation, and sophisticated reasoning.',
   };
 
-  const topicLine = topicHint ? `\nFocus the question on this topic: "${topicHint}". Use the source material related to this topic.\n` : '';
+  // Sanitize topicHint — strip quotes and limit length to prevent prompt injection
+  const safeTopic = topicHint ? topicHint.replace(/["""'`]/g, '').slice(0, 100) : '';
+  const topicLine = safeTopic ? `\nFocus the question on this topic: ${safeTopic}. Use the source material related to this topic.\n` : '';
   const diffLine = difficulty ? `\n${difficultyInstruction[difficulty] || difficultyInstruction['normal']}\n` : '';
 
   return `${typeInstruction[questionType] || 'Generate an open-ended question.'}${diffLine}${topicLine}\n\nSource material:\n${context}`;

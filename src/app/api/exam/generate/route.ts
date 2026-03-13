@@ -3,23 +3,47 @@ import { cookies } from 'next/headers';
 import { sql } from '@vercel/postgres';
 import { EXAM_GENERATE_PROMPT, buildExamGenerateMessages } from '@/lib/prompts';
 import { formatContextForPrompt } from '@/lib/rag';
-import { generateText } from '@/lib/ai';
+import { generateText, sanitizeLLMJson } from '@/lib/ai';
+import { verifyCookie } from '@/lib/auth';
 import type { ChunkResult } from '@/types';
+
+const VALID_QUESTION_TYPES = ['open-ended', 'scenario', 'compare-contrast'];
+const VALID_DIFFICULTIES = ['normal', 'advanced', 'extreme'];
 
 // Server-side store for rubrics + source chunks (prevents leaking to client)
 export const examStore = new Map<string, { rubric: string; sourceChunks: ChunkResult[]; expiresAt: number }>();
 
+// Periodic cleanup of expired entries
+function cleanupExpired() {
+  const now = Date.now();
+  for (const [key, value] of examStore) {
+    if (value.expiresAt < now) examStore.delete(key);
+  }
+}
+
 export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
   const auth = cookieStore.get('cla-auth');
-  if (!auth) {
+  if (!auth || !verifyCookie(auth.value)) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const { courseSlug, questionType, topicHint, difficulty } = await request.json();
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
+
+  const { courseSlug, questionType, topicHint, difficulty } = body;
+
+  // Input validation
+  const qType = VALID_QUESTION_TYPES.includes(questionType) ? questionType : 'open-ended';
+  const diff = VALID_DIFFICULTIES.includes(difficulty) ? difficulty : 'normal';
+  const topic = typeof topicHint === 'string' ? topicHint.slice(0, 200).trim() : '';
 
   let result;
-  if (courseSlug) {
+  if (courseSlug && typeof courseSlug === 'string') {
     result = await sql`
       SELECT c.content, c.page_number, c.chunk_index, c.course_slug,
              d.filename, d.lecture_number, d.priority,
@@ -51,12 +75,15 @@ export async function POST(request: NextRequest) {
   }
 
   const context = formatContextForPrompt(chunks);
-  const userMessage = buildExamGenerateMessages(context, questionType, topicHint, difficulty);
+  const userMessage = buildExamGenerateMessages(context, qType, topic || undefined, diff);
 
-  const text = await generateText(EXAM_GENERATE_PROMPT, userMessage, 1024);
+  const text = await generateText(EXAM_GENERATE_PROMPT, userMessage, 2048);
 
   try {
-    const parsed = JSON.parse(text);
+    const parsed = JSON.parse(sanitizeLLMJson(text));
+
+    // Cleanup expired entries before adding new ones
+    cleanupExpired();
 
     const questionId = crypto.randomUUID();
     examStore.set(questionId, {
@@ -68,7 +95,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       questionId,
       question: parsed.question,
-      questionType,
+      questionType: qType,
       courseName: chunks[0].course_name,
       lectureScope: null,
     });

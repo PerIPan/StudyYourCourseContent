@@ -47,18 +47,55 @@ export function ExamSetup({
       .catch(() => {});
   }, []);
 
+  const sectionLabel = {
+    fontSize: '0.65rem',
+    fontWeight: '600',
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase' as const,
+    color: 'var(--text-muted)',
+    marginBottom: '0.5rem',
+  };
+
+  function tagStyle(active: boolean) {
+    return active
+      ? {
+          backgroundColor: 'var(--tag-active-bg)',
+          color: 'var(--tag-active-text)',
+          borderColor: 'var(--tag-active-border)',
+        }
+      : {
+          backgroundColor: 'var(--tag-bg)',
+          color: 'var(--tag-text)',
+          borderColor: 'var(--tag-border)',
+        };
+  }
+
   return (
-    <div className="flex-1 p-6 max-w-lg mx-auto w-full">
+    <div className="flex-1 p-6 max-w-2xl mx-auto w-full overflow-y-auto">
+
+      {/* Course selector */}
       <div className="mb-5">
-        <div className="text-xs font-semibold text-slate-400 uppercase mb-2">Course</div>
+        <div className="flex items-center gap-1.5 mb-0">
+          <div style={sectionLabel}>Course</div>
+          <span className="relative group">
+            <svg className="w-3.5 h-3.5 cursor-help" style={{ color: 'var(--border-strong)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <span
+              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+              style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-page)' }}
+            >
+              Select a course to avoid cross-course questions
+            </span>
+          </span>
+        </div>
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setCourseSlug(null)}
-            className={`text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors ${
-              courseSlug === null
-                ? 'bg-black text-white border-red-500'
-                : 'bg-white text-gray-500 border-gray-300'
-            }`}
+            className="text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors"
+            style={tagStyle(courseSlug === null)}
           >
             All Courses
           </button>
@@ -66,11 +103,8 @@ export function ExamSetup({
             <button
               key={c.slug}
               onClick={() => setCourseSlug(c.slug)}
-              className={`text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors ${
-                courseSlug === c.slug
-                  ? 'bg-black text-white border-black'
-                  : 'bg-white text-gray-500 border-gray-300'
-              }`}
+              className="text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors"
+              style={tagStyle(courseSlug === c.slug)}
             >
               {c.name}
             </button>
@@ -78,18 +112,16 @@ export function ExamSetup({
         </div>
       </div>
 
+      {/* Question type */}
       <div className="mb-6">
-        <div className="text-xs font-semibold text-slate-400 uppercase mb-2">Question Type</div>
+        <div style={sectionLabel}>Question Type</div>
         <div className="flex gap-2 flex-wrap">
           {QUESTION_TYPES.map(t => (
             <button
               key={t.value}
               onClick={() => setQuestionType(t.value)}
-              className={`text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors ${
-                questionType === t.value
-                  ? 'bg-indigo-50 text-indigo-600 border-indigo-500'
-                  : 'bg-white text-slate-500 border-slate-200'
-              }`}
+              className="text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors"
+              style={tagStyle(questionType === t.value)}
             >
               {t.label}
             </button>
@@ -97,16 +129,22 @@ export function ExamSetup({
         </div>
       </div>
 
+      {/* Topic hint */}
       <div className="mb-6">
         <div className="flex items-center gap-1.5 mb-2">
-          <div className="text-xs font-semibold text-slate-400 uppercase">Topic</div>
-          <span className="text-[0.6rem] text-slate-300">(optional)</span>
+          <div style={sectionLabel}>Topic</div>
+          <span className="text-[0.6rem]" style={{ color: 'var(--border-strong)' }}>(optional)</span>
           <span className="relative group">
-            <svg className="w-3.5 h-3.5 text-slate-300 cursor-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" />
+            <svg className="w-3.5 h-3.5 cursor-help" style={{ color: 'var(--border-strong)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-slate-800 text-white text-[0.65rem] rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              Focus the question on a specific topic, e.g. &quot;risk management&quot;, &quot;CMM&quot; or &quot;Governance&quot;
+            <span
+              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+              style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-page)' }}
+            >
+              Focus on a specific topic, e.g. &quot;risk management&quot;, &quot;CMM&quot;
             </span>
           </span>
         </div>
@@ -115,22 +153,27 @@ export function ExamSetup({
           onChange={e => setTopicHint(e.target.value)}
           placeholder="e.g. risk management, zero trust, incident response..."
           rows={2}
-          className="w-full bg-white border-2 border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 placeholder:text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
+          className="w-full rounded-lg px-3 py-2 text-sm border-2 focus:outline-none transition-colors resize-none"
+          style={{
+            backgroundColor: 'var(--bg-card)',
+            color: 'var(--text-primary)',
+            borderColor: 'var(--border)',
+          }}
+          onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
+          onBlur={e => (e.target.style.borderColor = 'var(--border)')}
         />
       </div>
 
+      {/* Complexity */}
       <div className="mb-6">
-        <div className="text-xs font-semibold text-slate-400 uppercase mb-2">Complexity</div>
+        <div style={sectionLabel}>Complexity</div>
         <div className="flex gap-2 flex-wrap">
           {DIFFICULTY_LEVELS.map(d => (
             <button
               key={d.value}
               onClick={() => setDifficulty(d.value)}
-              className={`text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors ${
-                difficulty === d.value
-                  ? 'bg-indigo-50 text-indigo-600 border-indigo-500'
-                  : 'bg-white text-slate-500 border-slate-200'
-              }`}
+              className="text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors"
+              style={tagStyle(difficulty === d.value)}
             >
               {d.label}
             </button>
@@ -141,7 +184,10 @@ export function ExamSetup({
       <button
         onClick={onGenerate}
         disabled={loading}
-        className="w-full bg-indigo-500 text-white rounded-lg py-3 font-semibold text-sm hover:bg-indigo-600 disabled:opacity-50 transition-colors"
+        className="theme-accent-btn w-full rounded-lg py-3 font-semibold text-sm disabled:opacity-50 transition-colors"
+        style={{ backgroundColor: 'var(--accent)', color: 'var(--text-on-accent)' }}
+        onMouseEnter={e => ((e.currentTarget).style.backgroundColor = 'var(--accent-hover)')}
+        onMouseLeave={e => ((e.currentTarget).style.backgroundColor = 'var(--accent)')}
       >
         {loading ? 'Generating...' : 'Generate Question'}
       </button>
