@@ -112,6 +112,10 @@ export function ChatInput({ onSend, isLoading, voice }: ChatInputProps) {
         </div>
       )}
 
+      <p className="text-center text-[0.6rem] mb-1.5" style={{ color: 'var(--border-strong)' }}>
+        no information is saved · Google Gemini is used
+      </p>
+
       <form onSubmit={handleSubmit} className="flex gap-2 items-end">
         <VoiceButton
           isListening={voice.isListening}

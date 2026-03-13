@@ -6,11 +6,11 @@ const PRIORITY_BOOST = 0.05;
 
 export async function retrieveContext(
   question: string,
-  courseSlug?: string,
+  courseSlugs?: string[],
   limit: number = 5
 ): Promise<ChunkResult[]> {
   const embedding = await embedText(question);
-  const result = await searchChunks(embedding, courseSlug, 8);
+  const result = await searchChunks(embedding, courseSlugs, 8);
 
   const rows = result.rows as ChunkResult[];
 

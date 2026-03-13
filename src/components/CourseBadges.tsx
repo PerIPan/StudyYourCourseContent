@@ -9,8 +9,8 @@ interface Course {
 }
 
 interface CourseBadgesProps {
-  selected: string | null;
-  onSelect: (slug: string | null) => void;
+  selected: string[];
+  onSelect: (slugs: string[]) => void;
 }
 
 export function CourseBadges({ selected, onSelect }: CourseBadgesProps) {
@@ -23,13 +23,34 @@ export function CourseBadges({ selected, onSelect }: CourseBadgesProps) {
       .catch(() => {});
   }, []);
 
+  const isAll = selected.length === 0;
+
+  function toggleCourse(slug: string) {
+    if (isAll) {
+      // switching from All → pick just this one
+      onSelect([slug]);
+    } else if (selected.includes(slug)) {
+      // deselect — if last one, go back to All
+      const next = selected.filter(s => s !== slug);
+      onSelect(next);
+    } else {
+      // add course — if all courses now selected, auto-enable All
+      const next = [...selected, slug];
+      if (courses.length > 0 && next.length >= courses.length) {
+        onSelect([]);
+      } else {
+        onSelect(next);
+      }
+    }
+  }
+
   return (
     <div className="flex gap-1.5">
       <button
-        onClick={() => onSelect(null)}
+        onClick={() => onSelect([])}
         className="text-xs px-2.5 py-1 rounded-full font-semibold transition-colors cursor-pointer border"
         style={
-          selected === null
+          isAll
             ? {
                 backgroundColor: 'var(--accent-subtle)',
                 color: 'var(--accent-text)',
@@ -47,10 +68,10 @@ export function CourseBadges({ selected, onSelect }: CourseBadgesProps) {
       {courses.map(c => (
         <button
           key={c.slug}
-          onClick={() => onSelect(c.slug)}
+          onClick={() => toggleCourse(c.slug)}
           className="text-xs px-2.5 py-1 rounded-full font-semibold transition-colors cursor-pointer border"
           style={
-            selected === c.slug
+            !isAll && selected.includes(c.slug)
               ? {
                   backgroundColor: 'var(--tag-active-bg)',
                   color: 'var(--tag-active-text)',

@@ -6,12 +6,12 @@ export const db = drizzle(sql, { schema });
 
 export async function searchChunks(
   queryEmbedding: number[],
-  courseSlug?: string,
+  courseSlugs?: string[],
   limit: number = 8
 ) {
   const embeddingStr = `[${queryEmbedding.join(',')}]`;
 
-  if (courseSlug) {
+  if (courseSlugs && courseSlugs.length === 1) {
     return sql`
       SELECT c.id, c.content, c.page_number, c.chunk_index, c.course_slug,
              d.filename, d.lecture_number, d.priority,
@@ -20,7 +20,23 @@ export async function searchChunks(
       FROM chunks c
       JOIN documents d ON c.document_id = d.id
       JOIN courses co ON d.course_id = co.id
-      WHERE c.course_slug = ${courseSlug}
+      WHERE c.course_slug = ${courseSlugs[0]}
+        AND 1 - (c.embedding_vec <=> ${embeddingStr}::vector) > 0.5
+      ORDER BY c.embedding_vec <=> ${embeddingStr}::vector
+      LIMIT ${limit}
+    `;
+  }
+
+  if (courseSlugs && courseSlugs.length === 2) {
+    return sql`
+      SELECT c.id, c.content, c.page_number, c.chunk_index, c.course_slug,
+             d.filename, d.lecture_number, d.priority,
+             co.name as course_name,
+             1 - (c.embedding_vec <=> ${embeddingStr}::vector) as similarity
+      FROM chunks c
+      JOIN documents d ON c.document_id = d.id
+      JOIN courses co ON d.course_id = co.id
+      WHERE (c.course_slug = ${courseSlugs[0]} OR c.course_slug = ${courseSlugs[1]})
         AND 1 - (c.embedding_vec <=> ${embeddingStr}::vector) > 0.5
       ORDER BY c.embedding_vec <=> ${embeddingStr}::vector
       LIMIT ${limit}

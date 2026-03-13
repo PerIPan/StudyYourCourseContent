@@ -6,7 +6,7 @@ import type { ChatMessage, SourceCitation } from '@/types';
 export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [courseFilter, setCourseFilter] = useState<string | null>(null);
+  const [courseFilter, setCourseFilter] = useState<string[]>([]);
   const [answerLength, setAnswerLength] = useState<'short' | 'normal'>('short');
 
   const sendMessage = useCallback(async (content: string) => {
@@ -20,7 +20,7 @@ export function useChat() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: content,
-          courseSlug: courseFilter,
+          courseSlugs: courseFilter.length > 0 ? courseFilter : undefined,
           answerLength,
           history: messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
         }),

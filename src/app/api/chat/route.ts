@@ -19,15 +19,18 @@ export async function POST(request: NextRequest) {
     return new Response('Invalid JSON body', { status: 400 });
   }
 
-  const { message, courseSlug, answerLength, history } = body;
+  const { message, courseSlugs, answerLength, history } = body;
 
   if (!message || typeof message !== 'string') {
     return new Response('Message required', { status: 400 });
   }
 
+  // Support both single slug (legacy) and array of slugs
+  const slugs: string[] | undefined = Array.isArray(courseSlugs) && courseSlugs.length > 0 ? courseSlugs : undefined;
+
   let chunks: Awaited<ReturnType<typeof retrieveContext>> = [];
   try {
-    chunks = await retrieveContext(message, courseSlug || undefined);
+    chunks = await retrieveContext(message, slugs);
   } catch (err) {
     console.error('[Embedding/RAG error]', err);
     chunks = [];
