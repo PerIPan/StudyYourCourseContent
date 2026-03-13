@@ -25,6 +25,7 @@ export default function ExamPage() {
   const [difficulty, setDifficulty] = useState('normal');
   const [generating, setGenerating] = useState(false);
   const [grading, setGrading] = useState(false);
+  const [skipped, setSkipped] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -54,6 +55,7 @@ export default function ExamPage() {
   async function handleSubmitAnswer(answer: string) {
     if (!currentQuestion) return;
     setGrading(true);
+    setSkipped(answer === '(show model answer)');
     setErrorMessage(null);
     try {
       const res = await fetch('/api/exam/grade', {
@@ -150,6 +152,7 @@ export default function ExamPage() {
         <ExamGrading
           grade={currentGrade}
           question={currentQuestion.question}
+          skipped={skipped}
           onNext={handleGenerate}
           onBack={() => setState('setup')}
         />

@@ -44,7 +44,37 @@ You must respond with valid JSON in this exact format:
   "modelAnswer": "A thorough model answer with source references (use markdown: paragraphs, **bold**, lists, headings)"
 }`;
 
-export function buildExamGenerateMessages(context: string, questionType: string, topicHint?: string, difficulty?: string) {
+const COURSE_TOPIC_GUIDANCE: Record<string, string> = {
+  'cla-foundations-i': `Priority exam topics for this course (focus on these):
+- Governance & Cybersecurity Governance
+- Cognitive Biases in Cybersecurity Governance
+- Cyber Resilience (leadership of resilience, decision-making, Dutch banking sector)
+- NIST CSF practical application
+- Safety-II approach to Cybersecurity
+- Crisis Communication after Data Breaches
+- Human Capital in Cybersecurity`,
+
+  'cla-strategy-and-leadership': `Priority exam topics for this course (focus on these):
+- Corporate Structures for CISOs
+- Leadership Theory & Business Leadership Roles
+- Leadership Crisis (Tyco case study)
+- CISO Role: Yesterday, Today, Tomorrow
+- Business Strategy to Cyber Security Strategy
+- How to Organise and Execute
+- CISO in a VUCA World`,
+
+  'cla-threat-landscape': `Priority exam topics for this course (focus on these):
+- ENISA Threat Landscape
+- MITRE ATT&CK Framework
+- Diamond Model of Intrusion Analysis
+- Understanding Adversaries / State-Sponsored Actors
+- Cyber Threat Intelligence (CTI) for Leaders
+- CTI-CMM (Maturity Model)
+- Threat-Informed Defense / Red Teaming
+- TIBER-EU Framework`,
+};
+
+export function buildExamGenerateMessages(context: string, questionType: string, topicHint?: string, difficulty?: string, courseSlug?: string) {
   const typeInstruction: Record<string, string> = {
     'open-ended': 'Generate an open-ended question that requires explanation and analysis.',
     'scenario': 'Generate a scenario-based question where the student must apply concepts to a realistic cybersecurity situation. Set the scene, then ask what they would do as a CISO or security leader.',
@@ -62,5 +92,12 @@ export function buildExamGenerateMessages(context: string, questionType: string,
   const topicLine = safeTopic ? `\nFocus the question on this topic: ${safeTopic}. Use the source material related to this topic.\n` : '';
   const diffLine = difficulty ? `\n${difficultyInstruction[difficulty] || difficultyInstruction['normal']}\n` : '';
 
-  return `${typeInstruction[questionType] || 'Generate an open-ended question.'}${diffLine}${topicLine}\n\nSource material:\n${context}`;
+  // Course-specific topic guidance
+  const topicGuidance = courseSlug && COURSE_TOPIC_GUIDANCE[courseSlug]
+    ? `\n${COURSE_TOPIC_GUIDANCE[courseSlug]}\n`
+    : Object.values(COURSE_TOPIC_GUIDANCE).length > 0
+      ? `\n${Object.values(COURSE_TOPIC_GUIDANCE).join('\n\n')}\n`
+      : '';
+
+  return `${typeInstruction[questionType] || 'Generate an open-ended question.'}${diffLine}${topicGuidance}${topicLine}\n\nSource material:\n${context}`;
 }

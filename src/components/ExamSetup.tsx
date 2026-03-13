@@ -53,7 +53,6 @@ export function ExamSetup({
     letterSpacing: '0.08em',
     textTransform: 'uppercase' as const,
     color: 'var(--text-muted)',
-    marginBottom: '0.5rem',
   };
 
   function tagStyle(active: boolean) {
@@ -75,7 +74,7 @@ export function ExamSetup({
 
       {/* Course selector */}
       <div className="mb-5">
-        <div className="relative group flex items-center gap-1.5 mb-0">
+        <div className="relative group flex items-center gap-1.5 mb-2">
           <div style={sectionLabel}>Course</div>
           <svg className="w-3.5 h-3.5 cursor-help" style={{ color: 'var(--border-strong)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" />
@@ -116,7 +115,7 @@ export function ExamSetup({
 
       {/* Question type */}
       <div className="mb-6">
-        <div className="relative group flex items-center gap-1.5">
+        <div className="relative group flex items-center gap-1.5 mb-2">
           <div style={sectionLabel}>Question Type</div>
           <svg className="w-3.5 h-3.5 cursor-help" style={{ color: 'var(--border-strong)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" />
@@ -179,7 +178,7 @@ export function ExamSetup({
 
       {/* Complexity */}
       <div className="mb-6">
-        <div style={sectionLabel}>Complexity</div>
+        <div className="mb-2" style={sectionLabel}>Complexity</div>
         <div className="flex gap-2 flex-wrap">
           {DIFFICULTY_LEVELS.map(d => (
             <button

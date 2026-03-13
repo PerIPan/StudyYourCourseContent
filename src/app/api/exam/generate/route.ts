@@ -76,7 +76,8 @@ export async function POST(request: NextRequest) {
   }
 
   const context = formatContextForPrompt(chunks);
-  const userMessage = buildExamGenerateMessages(context, qType, topic || undefined, diff);
+  const detectedSlug = courseSlug || chunks[0]?.course_slug || undefined;
+  const userMessage = buildExamGenerateMessages(context, qType, topic || undefined, diff, detectedSlug);
 
   const text = await generateText(EXAM_GENERATE_PROMPT, userMessage, 2048);
 

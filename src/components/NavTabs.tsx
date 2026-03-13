@@ -9,7 +9,7 @@ export function NavTabs({ isAdmin = false }: { isAdmin?: boolean }) {
 
   const tabs = [
     { href: '/chat', label: 'Chat' },
-    { href: '/exam', label: 'Exam Prep' },
+    { href: '/exam', label: 'Exam Prep - beta' },
     ...(isAdmin ? [{ href: '/admin', label: 'Admin' }] : []),
   ];
 

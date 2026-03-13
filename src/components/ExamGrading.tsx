@@ -7,11 +7,12 @@ import type { ExamGrade } from '@/types';
 interface ExamGradingProps {
   grade: ExamGrade;
   question: string;
+  skipped?: boolean;
   onNext: () => void;
   onBack: () => void;
 }
 
-export function ExamGrading({ grade, question, onNext, onBack }: ExamGradingProps) {
+export function ExamGrading({ grade, question, skipped, onNext, onBack }: ExamGradingProps) {
   return (
     <div className="flex-1 overflow-y-auto p-4 max-w-4xl mx-auto w-full">
       {/* Success banner */}
@@ -23,8 +24,8 @@ export function ExamGrading({ grade, question, onNext, onBack }: ExamGradingProp
           color: 'var(--success-text)',
         }}
       >
-        <p className="font-semibold text-sm">Thank you for submitting!</p>
-        <p className="text-xs mt-1 opacity-80">Here is your feedback and a model answer to help you learn.</p>
+        <p className="font-semibold text-sm">{skipped ? 'Model Answer' : 'Thank you for submitting!'}</p>
+        <p className="text-xs mt-1 opacity-80">{skipped ? 'Here is the model answer for this question.' : 'Here is your feedback and a model answer to help you learn.'}</p>
       </div>
 
       {/* Question card */}
@@ -50,45 +51,47 @@ export function ExamGrading({ grade, question, onNext, onBack }: ExamGradingProp
         </div>
       </div>
 
-      {/* Feedback card */}
-      <div
-        className="theme-card rounded-lg p-4 mb-4 border"
-        style={{
-          backgroundColor: 'var(--bg-card)',
-          borderColor: 'var(--border)',
-          boxShadow: 'var(--shadow-card)',
-        }}
-      >
-        <div className="text-xs font-semibold uppercase mb-3" style={{ color: 'var(--success-text)' }}>
-          Feedback
-        </div>
+      {/* Feedback card — hidden when skipped */}
+      {!skipped && (
+        <div
+          className="theme-card rounded-lg p-4 mb-4 border"
+          style={{
+            backgroundColor: 'var(--bg-card)',
+            borderColor: 'var(--border)',
+            boxShadow: 'var(--shadow-card)',
+          }}
+        >
+          <div className="text-xs font-semibold uppercase mb-3" style={{ color: 'var(--success-text)' }}>
+            Feedback
+          </div>
 
-        <div className="mb-3">
-          <strong className="text-sm" style={{ color: 'var(--success-text)' }}>
-            What you got right:
-          </strong>
-          <div className="prose prose-sm max-w-none prose-p:my-1.5 prose-p:text-[0.95rem] prose-p:leading-relaxed mt-1">
-            <style>{`
-              .prose p, .prose li { color: var(--prose-body); }
-              .prose strong { color: var(--prose-strong); }
-            `}</style>
-            <ReactMarkdown>{grade.correct}</ReactMarkdown>
+          <div className="mb-3">
+            <strong className="text-sm" style={{ color: 'var(--success-text)' }}>
+              What you got right:
+            </strong>
+            <div className="prose prose-sm max-w-none prose-p:my-1.5 prose-p:text-[0.95rem] prose-p:leading-relaxed mt-1">
+              <style>{`
+                .prose p, .prose li { color: var(--prose-body); }
+                .prose strong { color: var(--prose-strong); }
+              `}</style>
+              <ReactMarkdown>{grade.correct}</ReactMarkdown>
+            </div>
+          </div>
+
+          <div>
+            <strong className="text-sm" style={{ color: 'var(--warning-text)' }}>
+              Areas to improve:
+            </strong>
+            <div className="prose prose-sm max-w-none prose-p:my-1.5 prose-p:text-[0.95rem] prose-p:leading-relaxed mt-1">
+              <style>{`
+                .prose p, .prose li { color: var(--prose-body); }
+                .prose strong { color: var(--prose-strong); }
+              `}</style>
+              <ReactMarkdown>{grade.missing}</ReactMarkdown>
+            </div>
           </div>
         </div>
-
-        <div>
-          <strong className="text-sm" style={{ color: 'var(--warning-text)' }}>
-            Areas to improve:
-          </strong>
-          <div className="prose prose-sm max-w-none prose-p:my-1.5 prose-p:text-[0.95rem] prose-p:leading-relaxed mt-1">
-            <style>{`
-              .prose p, .prose li { color: var(--prose-body); }
-              .prose strong { color: var(--prose-strong); }
-            `}</style>
-            <ReactMarkdown>{grade.missing}</ReactMarkdown>
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* Model answer card */}
       <div

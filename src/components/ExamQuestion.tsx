@@ -48,8 +48,24 @@ export function ExamQuestion({ question, questionType, courseName, lectureScope,
           boxShadow: 'var(--shadow-card)',
         }}
       >
-        <div className="text-xs font-semibold uppercase mb-2" style={{ color: 'var(--accent-text)' }}>
-          Question
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-xs font-semibold uppercase" style={{ color: 'var(--accent-text)' }}>
+            Question
+          </div>
+          <button
+            onClick={() => onSubmit('(show model answer)')}
+            disabled={loading}
+            className="text-xs px-3 py-1 rounded-full border transition-colors disabled:opacity-50"
+            style={{
+              borderColor: 'var(--border)',
+              color: 'var(--text-secondary)',
+              backgroundColor: 'var(--bg-muted)',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--accent)')}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}
+          >
+            {loading ? 'Loading...' : 'Model Answer'}
+          </button>
         </div>
         <div
           className="prose prose-sm max-w-none prose-p:my-2 prose-p:text-[0.95rem] prose-p:leading-relaxed prose-strong:font-semibold prose-ul:my-2 prose-ol:my-2 prose-li:text-[0.95rem]"
@@ -105,7 +121,7 @@ export function ExamQuestion({ question, questionType, courseName, lectureScope,
         onMouseEnter={e => ((e.currentTarget).style.backgroundColor = 'var(--accent-hover)')}
         onMouseLeave={e => ((e.currentTarget).style.backgroundColor = 'var(--accent)')}
       >
-        {loading ? 'Grading...' : 'Submit Answer'}
+        {loading ? 'Grading...' : 'Submit Your Answer for Feedback'}
       </button>
     </div>
   );
