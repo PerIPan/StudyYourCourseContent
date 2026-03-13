@@ -140,6 +140,7 @@ export default function ExamPage() {
           questionType={currentQuestion.questionType}
           courseName={currentQuestion.courseName}
           lectureScope={currentQuestion.lectureScope}
+          sources={currentQuestion.sources}
           onSubmit={handleSubmitAnswer}
           loading={grading}
         />

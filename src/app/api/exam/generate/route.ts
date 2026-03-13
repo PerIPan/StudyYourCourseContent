@@ -5,6 +5,7 @@ import { EXAM_GENERATE_PROMPT, buildExamGenerateMessages } from '@/lib/prompts';
 import { formatContextForPrompt } from '@/lib/rag';
 import { generateText, sanitizeLLMJson } from '@/lib/ai';
 import { verifyCookie } from '@/lib/auth';
+import { extractCitations } from '@/lib/rag';
 import type { ChunkResult } from '@/types';
 
 const VALID_QUESTION_TYPES = ['open-ended', 'scenario', 'compare-contrast'];
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
       JOIN documents d ON c.document_id = d.id
       JOIN courses co ON d.course_id = co.id
       WHERE c.course_slug = ${courseSlug}
-      ORDER BY RANDOM()
+      ORDER BY RANDOM() * CASE WHEN d.priority = 'high' THEN 3 ELSE 1 END DESC
       LIMIT 5
     `;
   } else {
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
       FROM chunks c
       JOIN documents d ON c.document_id = d.id
       JOIN courses co ON d.course_id = co.id
-      ORDER BY RANDOM()
+      ORDER BY RANDOM() * CASE WHEN d.priority = 'high' THEN 3 ELSE 1 END DESC
       LIMIT 5
     `;
   }
@@ -92,12 +93,15 @@ export async function POST(request: NextRequest) {
       expiresAt: Date.now() + 30 * 60 * 1000,
     });
 
+    const citations = extractCitations(chunks);
+
     return NextResponse.json({
       questionId,
       question: parsed.question,
       questionType: qType,
       courseName: chunks[0].course_name,
       lectureScope: null,
+      sources: citations,
     });
   } catch {
     return NextResponse.json({ error: 'Failed to generate question' }, { status: 500 });

@@ -75,20 +75,18 @@ export function ExamSetup({
 
       {/* Course selector */}
       <div className="mb-5">
-        <div className="flex items-center gap-1.5 mb-0">
+        <div className="relative group flex items-center gap-1.5 mb-0">
           <div style={sectionLabel}>Course</div>
-          <span className="relative group">
-            <svg className="w-3.5 h-3.5 cursor-help" style={{ color: 'var(--border-strong)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-              <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg>
-            <span
-              className="absolute top-full left-0 mt-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md w-52 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
-              style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-page)' }}
-            >
-              Select a course to avoid cross-course questions
-            </span>
+          <svg className="w-3.5 h-3.5 cursor-help" style={{ color: 'var(--border-strong)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span
+            className="absolute top-full left-0 mt-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md w-52 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
+            style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-page)' }}
+          >
+            Select a course to avoid cross-course questions
           </span>
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -118,7 +116,20 @@ export function ExamSetup({
 
       {/* Question type */}
       <div className="mb-6">
-        <div style={sectionLabel}>Question Type</div>
+        <div className="relative group flex items-center gap-1.5">
+          <div style={sectionLabel}>Question Type</div>
+          <svg className="w-3.5 h-3.5 cursor-help" style={{ color: 'var(--border-strong)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span
+            className="absolute top-full left-0 mt-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md w-64 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
+            style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-page)' }}
+          >
+            The model picks a question but it has not been in class! Better use the topic field for direction.
+          </span>
+        </div>
         <div className="flex gap-2 flex-wrap">
           {QUESTION_TYPES.map(t => (
             <button
@@ -135,21 +146,19 @@ export function ExamSetup({
 
       {/* Topic hint */}
       <div className="mb-6">
-        <div className="flex items-center gap-1.5 mb-2">
+        <div className="relative group flex items-center gap-1.5 mb-2">
           <div style={sectionLabel}>Topic</div>
           <span className="text-[0.6rem]" style={{ color: 'var(--border-strong)' }}>(optional)</span>
-          <span className="relative group">
-            <svg className="w-3.5 h-3.5 cursor-help" style={{ color: 'var(--border-strong)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-              <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg>
-            <span
-              className="absolute top-full left-0 mt-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md w-56 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
-              style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-page)' }}
-            >
-              Focus on a specific topic, e.g. &quot;risk management&quot;, &quot;CMM&quot;
-            </span>
+          <svg className="w-3.5 h-3.5 cursor-help" style={{ color: 'var(--border-strong)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span
+            className="absolute top-full left-0 mt-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md w-56 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
+            style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-page)' }}
+          >
+            Fill in to focus on a topic e.g. CMM, governance, resilience
           </span>
         </div>
         <textarea

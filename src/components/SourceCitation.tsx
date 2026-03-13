@@ -29,7 +29,7 @@ export function SourceCitationBlock({ sources }: { sources: Citation[] }) {
             }}
           >
             <div className="font-medium text-xs" style={{ color: 'var(--text-secondary)' }}>
-              {s.courseName}
+              <span style={{ color: 'var(--accent-text)' }}>Source {i + 1}:</span> {s.courseName}
             </div>
             <div className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
               Lecture {s.lectureNumber} / {s.filename}, p.{s.pageNumber}

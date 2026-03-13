@@ -2,17 +2,20 @@
 
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { SourceCitationBlock } from './SourceCitation';
+import type { SourceCitation } from '@/types';
 
 interface ExamQuestionProps {
   question: string;
   questionType: string;
   courseName: string;
   lectureScope: number | null;
+  sources: SourceCitation[];
   onSubmit: (answer: string) => void;
   loading: boolean;
 }
 
-export function ExamQuestion({ question, questionType, courseName, lectureScope, onSubmit, loading }: ExamQuestionProps) {
+export function ExamQuestion({ question, questionType, courseName, lectureScope, sources, onSubmit, loading }: ExamQuestionProps) {
   const [answer, setAnswer] = useState('');
 
   return (
@@ -63,6 +66,7 @@ export function ExamQuestion({ question, questionType, courseName, lectureScope,
           `}</style>
           <ReactMarkdown>{question}</ReactMarkdown>
         </div>
+        <SourceCitationBlock sources={sources} />
       </div>
 
       {/* Answer card */}

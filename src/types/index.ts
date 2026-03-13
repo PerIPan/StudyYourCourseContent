@@ -48,6 +48,7 @@ export interface ExamQuestion {
   questionType: 'open-ended' | 'scenario' | 'compare-contrast';
   courseName: string;
   lectureScope: number | null;
+  sources: SourceCitation[];
 }
 
 export interface ExamGrade {

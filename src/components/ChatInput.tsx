@@ -112,19 +112,26 @@ export function ChatInput({ onSend, isLoading, voice }: ChatInputProps) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex gap-2 items-center">
+      <form onSubmit={handleSubmit} className="flex gap-2 items-end">
         <VoiceButton
           isListening={voice.isListening}
           isSupported={voice.isSupported}
           onMouseDown={voice.startListening}
           onMouseUp={handleVoiceUp}
         />
-        <input
+        <textarea
           value={voice.isListening ? 'Listening...' : input}
           onChange={e => setInput(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e);
+            }
+          }}
           placeholder="Ask about your CLA course material..."
           disabled={isLoading || voice.isListening}
-          className="flex-1 border rounded-full px-4 py-2.5 text-sm focus:outline-none transition-colors"
+          rows={3}
+          className="flex-1 border rounded-2xl px-4 py-2.5 text-sm focus:outline-none transition-colors resize-none"
           style={{
             backgroundColor: 'var(--bg-input)',
             color: 'var(--text-primary)',

@@ -42,9 +42,7 @@ export function LoginForm({ onLogin }: LoginFormProps) {
         <h1 className="text-xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
           CLA Knowledgebase
         </h1>
-        <p className="text-sm mb-8" style={{ color: 'var(--text-secondary)' }}>
-          Cybersecurity Leadership Academy
-        </p>
+        <div className="mb-8" />
 
         <form
           onSubmit={handleSubmit}
