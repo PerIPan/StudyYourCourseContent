@@ -84,7 +84,7 @@ export function ExamSetup({
               <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
             <span
-              className="absolute bottom-full left-0 mb-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md w-52 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
+              className="absolute top-full left-0 mt-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md w-52 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
               style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-page)' }}
             >
               Select a course to avoid cross-course questions
@@ -95,7 +95,11 @@ export function ExamSetup({
           <button
             onClick={() => setCourseSlug(null)}
             className="text-xs px-3 py-1.5 rounded-full font-semibold border-2 transition-colors"
-            style={tagStyle(courseSlug === null)}
+            style={
+              courseSlug === null
+                ? { backgroundColor: 'var(--tag-active-bg)', color: 'var(--tag-active-text)', borderColor: '#ef4444' }
+                : tagStyle(false)
+            }
           >
             All Courses
           </button>
@@ -141,7 +145,7 @@ export function ExamSetup({
               <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
             <span
-              className="absolute bottom-full left-0 mb-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md w-56 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
+              className="absolute top-full left-0 mt-1.5 px-2.5 py-1.5 text-[0.65rem] rounded-md w-56 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
               style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-page)' }}
             >
               Focus on a specific topic, e.g. &quot;risk management&quot;, &quot;CMM&quot;
