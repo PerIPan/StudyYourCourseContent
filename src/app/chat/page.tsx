@@ -90,24 +90,52 @@ export default function ChatPage() {
           <NavTabs isAdmin={role === 'admin'} />
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
-          <select
-            value={courseFilter.length === 0 ? '' : courseFilter[0]}
-            onChange={e => {
-              const val = e.target.value;
-              setCourseFilter(val ? [val] : []);
-            }}
-            className="text-xs rounded-lg px-2.5 py-1.5 border font-medium"
-            style={{
-              backgroundColor: 'var(--bg-card)',
-              color: 'var(--text-primary)',
-              borderColor: 'var(--border)',
-            }}
-          >
-            <option value="">All Courses</option>
-            <option value="cla-foundations-i">CLA Foundations I</option>
-            <option value="cla-strategy-and-leadership">Strategy &amp; Leadership</option>
-            <option value="cla-threat-landscape">Threat Landscape</option>
-          </select>
+          {(() => {
+            const allCourses = [
+              { slug: 'cla-foundations-i', label: 'Foundations I' },
+              { slug: 'cla-strategy-and-leadership', label: 'Strategy & Leadership' },
+              { slug: 'cla-threat-landscape', label: 'Threat Landscape' },
+            ];
+            const isAll = courseFilter.length === 0;
+            const toggle = (slug: string) => {
+              if (isAll) {
+                setCourseFilter([slug]);
+              } else if (courseFilter.includes(slug)) {
+                const next = courseFilter.filter((s: string) => s !== slug);
+                setCourseFilter(next.length >= allCourses.length || next.length === 0 ? [] : next);
+              } else {
+                const next = [...courseFilter, slug];
+                setCourseFilter(next.length >= allCourses.length ? [] : next);
+              }
+            };
+            return (
+              <div className="flex gap-1.5">
+                <button
+                  onClick={() => setCourseFilter([])}
+                  className="text-xs px-2.5 py-1 rounded-full font-semibold transition-colors border"
+                  style={isAll
+                    ? { backgroundColor: 'var(--accent-subtle)', color: 'var(--accent-text)', borderColor: 'var(--accent)' }
+                    : { backgroundColor: 'var(--bg-muted)', color: 'var(--text-secondary)', borderColor: 'var(--border)' }
+                  }
+                >
+                  All
+                </button>
+                {allCourses.map(c => (
+                  <button
+                    key={c.slug}
+                    onClick={() => toggle(c.slug)}
+                    className="text-xs px-2.5 py-1 rounded-full font-semibold transition-colors border"
+                    style={!isAll && courseFilter.includes(c.slug)
+                      ? { backgroundColor: 'var(--tag-active-bg)', color: 'var(--tag-active-text)', borderColor: 'var(--tag-active-border)' }
+                      : { backgroundColor: 'var(--tag-bg)', color: 'var(--tag-text)', borderColor: 'var(--tag-border)' }
+                    }
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            );
+          })()}
           <div
             className="flex items-center rounded-full p-0.5 text-xs font-medium flex-shrink-0"
             style={{ backgroundColor: 'var(--bg-muted)', border: '1px solid var(--border)' }}
