@@ -22,9 +22,11 @@
     "pptx-parser": "^1.1.7-beta.9",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-markdown": "^10.1.0"
+    "react-markdown": "^10.1.0",
+    "adm-zip": "^0.5.16"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.5.7",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pdf-parse": "^1.1.5",
