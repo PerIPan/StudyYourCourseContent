@@ -1,0 +1,117 @@
+<h2>Web App UI Design</h2>
+<p class="subtitle">What your classmates will see</p>
+
+<div class="split">
+  <!-- Login Screen -->
+  <div class="mockup">
+    <div class="mockup-header">Login Screen</div>
+    <div class="mockup-body" style="padding: 0; background: #0f172a; min-height: 400px; display: flex; align-items: center; justify-content: center;">
+      <div style="text-align: center; width: 320px;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🛡️</div>
+        <div style="color: #e2e8f0; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.25rem;">CLA Knowledgebase</div>
+        <div style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 2rem;">Cybersecurity Leadership Academy</div>
+        <div style="background: #1e293b; border-radius: 12px; padding: 1.5rem;">
+          <input class="mock-input" placeholder="Enter class password" style="width: 100%; box-sizing: border-box; margin-bottom: 1rem; background: #0f172a; color: #e2e8f0; border: 1px solid #334155; padding: 0.75rem; border-radius: 8px;">
+          <button class="mock-button" style="width: 100%; background: #6366f1; color: white; border: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; cursor: pointer;">Enter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Screen -->
+  <div class="mockup">
+    <div class="mockup-header">Chat Interface</div>
+    <div class="mockup-body" style="padding: 0; background: #0f172a; min-height: 400px; display: flex; flex-direction: column;">
+
+      <!-- Header -->
+      <div style="background: #1e293b; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #334155;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.2rem;">🛡️</span>
+          <span style="color: #e2e8f0; font-weight: 600; font-size: 0.9rem;">CLA Knowledgebase</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <span style="background: #6366f1; color: white; font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px;">Foundations</span>
+          <span style="background: #059669; color: white; font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px;">Strategy</span>
+          <span style="background: #d97706; color: white; font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px;">Threats</span>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div style="flex: 1; padding: 1rem; overflow-y: auto;">
+        <!-- User message -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+          <div style="background: #6366f1; color: white; padding: 0.75rem 1rem; border-radius: 12px 12px 0 12px; max-width: 75%; font-size: 0.85rem;">
+            What are the key differences between threat actors according to ENISA?
+          </div>
+        </div>
+
+        <!-- AI response -->
+        <div style="display: flex; justify-content: flex-start; margin-bottom: 0.5rem;">
+          <div style="background: #1e293b; color: #e2e8f0; padding: 0.75rem 1rem; border-radius: 12px 12px 12px 0; max-width: 85%; font-size: 0.85rem; line-height: 1.6;">
+            According to the ENISA Threat Landscape 2025, threat actors are categorized by <strong style="color: #a5b4fc;">motivation</strong> and <strong style="color: #a5b4fc;">capability</strong>:
+            <br><br>
+            <strong>1. State-sponsored</strong> — highest capability, geopolitical motives...<br>
+            <strong>2. Cybercriminals</strong> — financially motivated, ransomware...<br>
+            <strong>3. Hacktivists</strong> — ideological, DDoS and defacement...
+            <br><br>
+            <div style="background: #0f172a; border-radius: 8px; padding: 0.75rem; margin-top: 0.5rem; font-size: 0.75rem;">
+              <div style="color: #94a3b8; margin-bottom: 0.25rem;">📄 Sources:</div>
+              <div style="color: #6366f1;">• Threat Landscape / Lecture 2 / ENISA Report, p.14-18</div>
+              <div style="color: #6366f1;">• Threat Landscape / Lecture 2 / Understanding Adversaries, slide 7</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div style="padding: 0.75rem; background: #1e293b; border-top: 1px solid #334155;">
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <input class="mock-input" placeholder="Ask about your CLA course material..." style="flex: 1; background: #0f172a; color: #e2e8f0; border: 1px solid #334155; padding: 0.65rem 1rem; border-radius: 999px; font-size: 0.85rem;">
+          <button style="background: #6366f1; border: none; color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1rem;">↑</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 2rem;">
+  <h3>UI Features</h3>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div style="background: rgba(99,102,241,0.05); padding: 1rem; border-radius: 8px; border: 1px solid rgba(99,102,241,0.2);">
+      <strong>Chat</strong>
+      <ul style="margin: 0.5rem 0 0 0; padding-left: 1.2rem; font-size: 0.9rem;">
+        <li>Streaming responses (typewriter effect)</li>
+        <li>Source citations with course/lecture/page</li>
+        <li>Markdown rendering in answers</li>
+        <li>Conversation history per session</li>
+      </ul>
+    </div>
+    <div style="background: rgba(5,150,105,0.05); padding: 1rem; border-radius: 8px; border: 1px solid rgba(5,150,105,0.2);">
+      <strong>Navigation</strong>
+      <ul style="margin: 0.5rem 0 0 0; padding-left: 1.2rem; font-size: 0.9rem;">
+        <li>Course filter badges (search within specific course)</li>
+        <li>New chat button</li>
+        <li>Dark theme (cybersecurity vibes)</li>
+        <li>Mobile responsive</li>
+      </ul>
+    </div>
+    <div style="background: rgba(217,119,6,0.05); padding: 1rem; border-radius: 8px; border: 1px solid rgba(217,119,6,0.2);">
+      <strong>Admin Panel (you only)</strong>
+      <ul style="margin: 0.5rem 0 0 0; padding-left: 1.2rem; font-size: 0.9rem;">
+        <li>Drag-and-drop file upload</li>
+        <li>Assign course & lecture to uploads</li>
+        <li>View indexed documents</li>
+        <li>Delete/re-index documents</li>
+      </ul>
+    </div>
+    <div style="background: rgba(139,92,246,0.05); padding: 1rem; border-radius: 8px; border: 1px solid rgba(139,92,246,0.2);">
+      <strong>OpenWhisperer (you only)</strong>
+      <ul style="margin: 0.5rem 0 0 0; padding-left: 1.2rem; font-size: 0.9rem;">
+        <li>Voice question → /api/chat → TTS answer</li>
+        <li>Same RAG pipeline, voice interface</li>
+        <li>New endpoint in unified_server.py</li>
+      </ul>
+    </div>
+  </div>
+</div>

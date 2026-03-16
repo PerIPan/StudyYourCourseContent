@@ -1,0 +1,88 @@
+<h2>System Architecture</h2>
+<p class="subtitle">CLA Knowledgebase — how the pieces connect</p>
+
+<div class="mockup">
+  <div class="mockup-header">Architecture Overview</div>
+  <div class="mockup-body" style="padding: 2rem; font-family: monospace; font-size: 0.85rem; line-height: 1.8;">
+    <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+
+      <!-- User Layer -->
+      <div style="flex: 1; min-width: 280px; max-width: 350px;">
+        <div style="background: #6366f1; color: white; padding: 0.5rem 1rem; border-radius: 8px 8px 0 0; text-align: center; font-weight: bold;">Users</div>
+        <div style="border: 2px solid #6366f1; border-top: none; border-radius: 0 0 8px 8px; padding: 1rem;">
+          <div style="background: #f0f0ff; padding: 0.75rem; border-radius: 6px; margin-bottom: 0.5rem;">
+            🌐 <strong>Web Chat UI</strong><br>
+            <span style="font-size: 0.8rem; color: #666;">Next.js app on Vercel<br>Shared password gate</span>
+          </div>
+          <div style="background: #f0f0ff; padding: 0.75rem; border-radius: 6px; margin-bottom: 0.5rem;">
+            🎤 <strong>OpenWhisperer</strong><br>
+            <span style="font-size: 0.8rem; color: #666;">Voice → API → Voice<br>Your local Mac only</span>
+          </div>
+          <div style="background: #f0f0ff; padding: 0.75rem; border-radius: 6px;">
+            📁 <strong>Admin Upload</strong><br>
+            <span style="font-size: 0.8rem; color: #666;">Password-protected page<br>PDF/PPTX/DOCX ingestion</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Backend Layer -->
+      <div style="flex: 1; min-width: 280px; max-width: 350px;">
+        <div style="background: #059669; color: white; padding: 0.5rem 1rem; border-radius: 8px 8px 0 0; text-align: center; font-weight: bold;">Backend (Next.js API Routes)</div>
+        <div style="border: 2px solid #059669; border-top: none; border-radius: 0 0 8px 8px; padding: 1rem;">
+          <div style="background: #f0fdf4; padding: 0.75rem; border-radius: 6px; margin-bottom: 0.5rem;">
+            💬 <strong>/api/chat</strong><br>
+            <span style="font-size: 0.8rem; color: #666;">1. Embed user question<br>2. Search pgvector for relevant chunks<br>3. Send context + question → Claude<br>4. Stream response back</span>
+          </div>
+          <div style="background: #f0fdf4; padding: 0.75rem; border-radius: 6px; margin-bottom: 0.5rem;">
+            📤 <strong>/api/upload</strong><br>
+            <span style="font-size: 0.8rem; color: #666;">Parse PDF/PPTX/DOCX<br>Chunk text → embed → store in pgvector</span>
+          </div>
+          <div style="background: #f0fdf4; padding: 0.75rem; border-radius: 6px;">
+            🔑 <strong>/api/auth</strong><br>
+            <span style="font-size: 0.8rem; color: #666;">Simple password check<br>Sets session cookie</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Layer -->
+      <div style="flex: 1; min-width: 280px; max-width: 350px;">
+        <div style="background: #d97706; color: white; padding: 0.5rem 1rem; border-radius: 8px 8px 0 0; text-align: center; font-weight: bold;">Data Layer</div>
+        <div style="border: 2px solid #d97706; border-top: none; border-radius: 0 0 8px 8px; padding: 1rem;">
+          <div style="background: #fffbeb; padding: 0.75rem; border-radius: 6px; margin-bottom: 0.5rem;">
+            🗄️ <strong>Vercel Postgres + pgvector</strong><br>
+            <span style="font-size: 0.8rem; color: #666;">
+              <em>documents</em> — file metadata, course, lecture<br>
+              <em>chunks</em> — text chunks + embeddings (1536d)<br>
+              <em>chat_history</em> — optional conversation log
+            </span>
+          </div>
+          <div style="background: #fffbeb; padding: 0.75rem; border-radius: 6px;">
+            🤖 <strong>Claude API (Anthropic)</strong><br>
+            <span style="font-size: 0.8rem; color: #666;">
+              Embedding: text-embedding-3-small (OpenAI)<br>
+              Chat: Claude Sonnet 4 via Anthropic SDK<br>
+              System prompt with course context
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Flow -->
+    <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e0e0e0;">
+      <strong>Chat Flow:</strong><br>
+      User asks question → embed question (OpenAI) → cosine similarity search in pgvector → top 5 chunks retrieved → Claude receives: system prompt + chunks + source refs + question → streams answer with citations back to user
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 1.5rem;">
+  <h3>Key Design Decisions</h3>
+  <ul>
+    <li><strong>OpenAI for embeddings only</strong> — text-embedding-3-small is cheap ($0.02/1M tokens), best-in-class for vector search. Claude for the actual reasoning.</li>
+    <li><strong>Chunk size: ~500 tokens with 50-token overlap</strong> — good balance for lecture material (slides vs dense papers)</li>
+    <li><strong>Source references</strong> — each chunk stores course name, lecture number, page/slide number. Answers cite these.</li>
+    <li><strong>OpenWhisperer integration</strong> — new endpoint in unified_server.py that calls /api/chat, pipes response through TTS</li>
+  </ul>
+</div>

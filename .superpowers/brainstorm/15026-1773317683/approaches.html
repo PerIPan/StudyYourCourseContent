@@ -1,0 +1,89 @@
+<h2>CLA Knowledgebase — Architecture Approaches</h2>
+<p class="subtitle">Choose how to build your RAG-powered study companion</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Next.js + Vercel AI SDK + PostgreSQL (pgvector)</h3>
+      <p><strong>Recommended</strong> — Full-stack Next.js app deployed on Vercel. Uses pgvector for embeddings stored in your existing PostgreSQL (or Vercel Postgres). Claude API for answers. Clean chat UI with source references.</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Pros</h4>
+          <ul>
+            <li>Native Vercel deployment — push and it's live</li>
+            <li>Vercel AI SDK handles streaming chat out of the box</li>
+            <li>pgvector is battle-tested for RAG at this scale</li>
+            <li>Single codebase (React + API routes)</li>
+            <li>Easy OpenWhisperer integration via API endpoint</li>
+            <li>You already have Vercel token configured</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Cons</h4>
+          <ul>
+            <li>Needs Vercel Postgres addon (free tier: 256MB, enough for ~20 courses)</li>
+            <li>Slightly more setup than pure serverless</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Next.js + Pinecone (Vector DB) + Vercel</h3>
+      <p>Same Next.js frontend but uses Pinecone as a dedicated vector database instead of pgvector. Separates vector search from relational data.</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Pros</h4>
+          <ul>
+            <li>Pinecone optimized specifically for vector search</li>
+            <li>Free tier: 100K vectors (plenty for course content)</li>
+            <li>No PostgreSQL dependency for deployment</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Cons</h4>
+          <ul>
+            <li>Extra service to manage (Pinecone account + API key)</li>
+            <li>Adds vendor dependency</li>
+            <li>Slightly higher latency (external API call vs local DB)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Next.js + ChromaDB (self-hosted) + VPS</h3>
+      <p>Open-source vector DB running on a VPS (e.g., Railway, Fly.io). Full control, no vendor lock-in, but more ops overhead.</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Pros</h4>
+          <ul>
+            <li>Fully open-source stack</li>
+            <li>No vendor lock-in on vector storage</li>
+            <li>Rich Python ecosystem for document processing</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Cons</h4>
+          <ul>
+            <li>Need separate hosting for ChromaDB (not serverless-friendly)</li>
+            <li>More infrastructure to maintain</li>
+            <li>Can't deploy cleanly on Vercel alone</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 2rem; padding: 1.5rem; border-left: 3px solid #6366f1; background: rgba(99,102,241,0.05); border-radius: 8px;">
+  <h3 style="margin-top:0;">My Recommendation: Option A</h3>
+  <p>For your use case — class-shared, Vercel-deployed, with OpenWhisperer integration — <strong>Next.js + pgvector</strong> is the cleanest path. You already have Vercel configured, PostgreSQL experience, and it keeps everything in one stack. The ~23 documents you have will generate maybe 2-3K vector chunks — pgvector handles this trivially.</p>
+</div>

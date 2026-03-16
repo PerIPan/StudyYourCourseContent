@@ -1,0 +1,184 @@
+<h2>Data Model</h2>
+<p class="subtitle">PostgreSQL + pgvector schema</p>
+
+<div class="mockup">
+  <div class="mockup-header">Database Schema</div>
+  <div class="mockup-body" style="padding: 2rem; font-family: monospace; font-size: 0.8rem;">
+
+    <!-- courses table -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 1.5rem; overflow: hidden;">
+      <div style="background: #6366f1; color: white; padding: 0.5rem 1rem; font-weight: 700;">courses</div>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem; color: #d97706;">🔑 id</td>
+          <td style="padding: 0.4rem; color: #64748b;">UUID</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">PK</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem;">name</td>
+          <td style="padding: 0.4rem; color: #64748b;">VARCHAR</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">"Foundations", "Strategy", "Threat Landscape"</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem;">slug</td>
+          <td style="padding: 0.4rem; color: #64748b;">VARCHAR</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">UNIQUE, for URL/filter</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem;">created_at</td>
+          <td style="padding: 0.4rem; color: #64748b;">TIMESTAMPTZ</td>
+          <td style="padding: 0.4rem; color: #94a3b8;"></td>
+        </tr>
+        <tr>
+          <td style="padding: 0.4rem 1rem;">updated_at</td>
+          <td style="padding: 0.4rem; color: #64748b;">TIMESTAMPTZ</td>
+          <td style="padding: 0.4rem; color: #94a3b8;"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- documents table -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 1.5rem; overflow: hidden;">
+      <div style="background: #059669; color: white; padding: 0.5rem 1rem; font-weight: 700;">documents</div>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem; color: #d97706;">🔑 id</td>
+          <td style="padding: 0.4rem; color: #64748b;">UUID</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">PK</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem; color: #6366f1;">→ course_id</td>
+          <td style="padding: 0.4rem; color: #64748b;">UUID</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">FK → courses</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem;">lecture_number</td>
+          <td style="padding: 0.4rem; color: #64748b;">INT</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">1, 2, 3, 4...</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem;">filename</td>
+          <td style="padding: 0.4rem; color: #64748b;">VARCHAR</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">original filename</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem;">file_type</td>
+          <td style="padding: 0.4rem; color: #64748b;">VARCHAR</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">pdf, pptx, docx</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem;">total_pages</td>
+          <td style="padding: 0.4rem; color: #64748b;">INT</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">page/slide count</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem;">chunk_count</td>
+          <td style="padding: 0.4rem; color: #64748b;">INT</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">number of chunks generated</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem;">created_at</td>
+          <td style="padding: 0.4rem; color: #64748b;">TIMESTAMPTZ</td>
+          <td style="padding: 0.4rem; color: #94a3b8;"></td>
+        </tr>
+        <tr>
+          <td style="padding: 0.4rem 1rem;">updated_at</td>
+          <td style="padding: 0.4rem; color: #64748b;">TIMESTAMPTZ</td>
+          <td style="padding: 0.4rem; color: #94a3b8;"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- chunks table -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 1.5rem; overflow: hidden;">
+      <div style="background: #d97706; color: white; padding: 0.5rem 1rem; font-weight: 700;">chunks <span style="font-weight: 400; opacity: 0.8;">— the core RAG table</span></div>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem; color: #d97706;">🔑 id</td>
+          <td style="padding: 0.4rem; color: #64748b;">UUID</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">PK</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem; color: #6366f1;">→ document_id</td>
+          <td style="padding: 0.4rem; color: #64748b;">UUID</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">FK → documents (CASCADE delete)</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem;">content</td>
+          <td style="padding: 0.4rem; color: #64748b;">TEXT</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">~500 tokens of source text</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9; background: #fffbeb;">
+          <td style="padding: 0.4rem 1rem; font-weight: 700;">embedding</td>
+          <td style="padding: 0.4rem; color: #64748b; font-weight: 700;">VECTOR(1536)</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">pgvector — OpenAI text-embedding-3-small</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem;">page_number</td>
+          <td style="padding: 0.4rem; color: #64748b;">INT</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">page/slide where chunk starts</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.4rem 1rem;">chunk_index</td>
+          <td style="padding: 0.4rem; color: #64748b;">INT</td>
+          <td style="padding: 0.4rem; color: #94a3b8;">order within document</td>
+        </tr>
+        <tr>
+          <td style="padding: 0.4rem 1rem;">created_at</td>
+          <td style="padding: 0.4rem; color: #64748b;">TIMESTAMPTZ</td>
+          <td style="padding: 0.4rem; color: #94a3b8;"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Indexes -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+      <div style="background: #8b5cf6; color: white; padding: 0.5rem 1rem; font-weight: 700;">Indexes</div>
+      <div style="padding: 1rem; font-size: 0.8rem; line-height: 2;">
+        <code style="background: #f1f5f9; padding: 0.2rem 0.5rem; border-radius: 4px;">CREATE INDEX ON chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 10);</code><br>
+        <code style="background: #f1f5f9; padding: 0.2rem 0.5rem; border-radius: 4px;">CREATE INDEX ON chunks (document_id);</code><br>
+        <code style="background: #f1f5f9; padding: 0.2rem 0.5rem; border-radius: 4px;">CREATE INDEX ON documents (course_id);</code><br>
+        <code style="background: #f1f5f9; padding: 0.2rem 0.5rem; border-radius: 4px;">CREATE UNIQUE INDEX ON courses (slug);</code>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section" style="margin-top: 1.5rem;">
+  <h3>RAG Query (simplified)</h3>
+  <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; font-family: monospace; font-size: 0.8rem; line-height: 1.8; color: #334155;">
+    <span style="color: #6366f1;">-- 1. Embed user question via OpenAI</span><br>
+    <span style="color: #6366f1;">-- 2. Search chunks by cosine similarity</span><br><br>
+    <span style="color: #d97706;">SELECT</span> c.content, c.page_number,<br>
+    &nbsp;&nbsp;d.filename, d.lecture_number,<br>
+    &nbsp;&nbsp;co.name <span style="color: #d97706;">AS</span> course_name,<br>
+    &nbsp;&nbsp;1 - (c.embedding <span style="color: #d97706;">&lt;=&gt;</span> $1) <span style="color: #d97706;">AS</span> similarity<br>
+    <span style="color: #d97706;">FROM</span> chunks c<br>
+    <span style="color: #d97706;">JOIN</span> documents d <span style="color: #d97706;">ON</span> c.document_id = d.id<br>
+    <span style="color: #d97706;">JOIN</span> courses co <span style="color: #d97706;">ON</span> d.course_id = co.id<br>
+    <span style="color: #d97706;">WHERE</span> 1 - (c.embedding <span style="color: #d97706;">&lt;=&gt;</span> $1) > 0.7<br>
+    &nbsp;&nbsp;<span style="color: #6366f1;">-- optional: AND co.slug = $2 (course filter)</span><br>
+    <span style="color: #d97706;">ORDER BY</span> c.embedding <span style="color: #d97706;">&lt;=&gt;</span> $1<br>
+    <span style="color: #d97706;">LIMIT</span> 5;
+  </div>
+</div>
+
+<div class="section" style="margin-top: 1rem;">
+  <h3>Estimated Scale</h3>
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+    <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+      <div style="font-size: 1.5rem; font-weight: 700; color: #6366f1;">~23</div>
+      <div style="font-size: 0.8rem; color: #64748b;">documents now</div>
+    </div>
+    <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+      <div style="font-size: 1.5rem; font-weight: 700; color: #059669;">~2-3K</div>
+      <div style="font-size: 0.8rem; color: #64748b;">chunks estimated</div>
+    </div>
+    <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+      <div style="font-size: 1.5rem; font-weight: 700; color: #d97706;">~18MB</div>
+      <div style="font-size: 0.8rem; color: #64748b;">vector storage</div>
+    </div>
+  </div>
+  <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem;">Vercel Postgres free tier: 256MB — plenty of room for 6+ courses</p>
+</div>
