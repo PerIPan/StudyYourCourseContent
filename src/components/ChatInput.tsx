@@ -112,10 +112,6 @@ export function ChatInput({ onSend, isLoading, voice }: ChatInputProps) {
         </div>
       )}
 
-      <p className="text-right text-[0.6rem] mb-1.5" style={{ color: 'var(--border-strong)' }}>
-        no information is saved · Google Gemini is used
-      </p>
-
       <form onSubmit={handleSubmit} className="flex gap-2 items-end">
         <VoiceButton
           isListening={voice.isListening}
@@ -205,6 +201,7 @@ export function ChatInput({ onSend, isLoading, voice }: ChatInputProps) {
       <p className="text-center text-[0.65rem] mt-1.5" style={{ color: 'var(--text-muted)' }}>
         Hold mic or Ctrl to speak (Firefox not supported){' '}
         {voice.autoReadAloud ? '· summary read aloud' : '· voice muted'}
+        {' '}| no information is saved · Google Gemini is used
       </p>
     </div>
   );

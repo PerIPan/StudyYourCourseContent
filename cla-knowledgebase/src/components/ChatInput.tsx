@@ -199,8 +199,9 @@ export function ChatInput({ onSend, isLoading, voice }: ChatInputProps) {
       </form>
 
       <p className="text-center text-[0.65rem] mt-1.5" style={{ color: 'var(--text-muted)' }}>
-        no information is saved · Google Gemini is used | Hold mic or Ctrl to speak (Firefox not supported){' '}
+        Hold mic or Ctrl to speak (Firefox not supported){' '}
         {voice.autoReadAloud ? '· summary read aloud' : '· voice muted'}
+        {' '}| no information is saved · Google Gemini is used
       </p>
     </div>
   );

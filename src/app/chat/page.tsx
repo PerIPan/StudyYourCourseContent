@@ -89,8 +89,25 @@ export default function ChatPage() {
           </span>
           <NavTabs isAdmin={role === 'admin'} />
         </div>
-        <div className="flex items-center gap-3 overflow-x-auto flex-shrink-0 max-w-[60vw] sm:max-w-none">
-          <CourseBadges selected={courseFilter} onSelect={setCourseFilter} />
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <select
+            value={courseFilter.length === 0 ? '' : courseFilter[0]}
+            onChange={e => {
+              const val = e.target.value;
+              setCourseFilter(val ? [val] : []);
+            }}
+            className="text-xs rounded-lg px-2.5 py-1.5 border font-medium"
+            style={{
+              backgroundColor: 'var(--bg-card)',
+              color: 'var(--text-primary)',
+              borderColor: 'var(--border)',
+            }}
+          >
+            <option value="">All Courses</option>
+            <option value="cla-foundations-i">CLA Foundations I</option>
+            <option value="cla-strategy-and-leadership">Strategy &amp; Leadership</option>
+            <option value="cla-threat-landscape">Threat Landscape</option>
+          </select>
           <div
             className="flex items-center rounded-full p-0.5 text-xs font-medium flex-shrink-0"
             style={{ backgroundColor: 'var(--bg-muted)', border: '1px solid var(--border)' }}

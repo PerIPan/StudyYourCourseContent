@@ -17,6 +17,7 @@ interface ExamQuestionProps {
 
 export function ExamQuestion({ question, questionType, courseName, lectureScope, sources, onSubmit, loading }: ExamQuestionProps) {
   const [answer, setAnswer] = useState('');
+  const [showTemplate, setShowTemplate] = useState(false);
 
   return (
     <div className="flex-1 overflow-y-auto p-4 max-w-4xl mx-auto w-full">
@@ -84,6 +85,71 @@ export function ExamQuestion({ question, questionType, courseName, lectureScope,
         </div>
         <SourceCitationBlock sources={sources} />
       </div>
+
+      {/* Writing template toggle */}
+      <button
+        onClick={() => setShowTemplate(!showTemplate)}
+        className="w-full flex items-center justify-between rounded-lg px-4 py-2.5 mb-4 border text-sm font-medium transition-colors"
+        style={{
+          backgroundColor: showTemplate ? 'var(--accent-subtle)' : 'var(--bg-card)',
+          borderColor: showTemplate ? 'var(--accent)' : 'var(--border)',
+          color: 'var(--text-secondary)',
+        }}
+      >
+        <span>Answer Writing Guide (6-Step Academic Structure)</span>
+        <svg
+          className="w-4 h-4 transition-transform"
+          style={{ transform: showTemplate ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {showTemplate && (
+        <div
+          className="theme-card rounded-lg p-4 mb-4 border text-sm leading-relaxed"
+          style={{
+            backgroundColor: 'var(--bg-card)',
+            borderColor: 'var(--border)',
+            boxShadow: 'var(--shadow-card)',
+            color: 'var(--text-secondary)',
+          }}
+        >
+          <div className="space-y-3">
+            <div>
+              <span className="font-semibold" style={{ color: 'var(--accent-text)' }}>1. Direct Answer (Thesis Statement)</span>
+              <p className="mt-1">Begin with a one-sentence answer. Shows clarity and confidence.</p>
+              <p className="italic mt-1" style={{ color: 'var(--text-muted)' }}>&ldquo;In essence, this question can be answered as follows: &hellip;&rdquo;</p>
+            </div>
+            <div>
+              <span className="font-semibold" style={{ color: 'var(--accent-text)' }}>2. Define Key Concepts</span>
+              <p className="mt-1">Briefly explain central idea(s) using precise, academic language.</p>
+              <p className="italic mt-1" style={{ color: 'var(--text-muted)' }}>&ldquo;[Concept] refers to &hellip; and is significant because &hellip;&rdquo;</p>
+            </div>
+            <div>
+              <span className="font-semibold" style={{ color: 'var(--accent-text)' }}>3. Core Argument (2&ndash;3 Points)</span>
+              <p className="mt-1">Each point = claim + reason + brief explanation. Keep paragraphs short and logical.</p>
+              <p className="italic mt-1" style={{ color: 'var(--text-muted)' }}>&ldquo;Firstly, &hellip; because &hellip; This matters as &hellip;&rdquo;</p>
+            </div>
+            <div>
+              <span className="font-semibold" style={{ color: 'var(--accent-text)' }}>4. Apply to Context</span>
+              <p className="mt-1">Use a theoretical mechanism, process, or real-world example.</p>
+              <p className="italic mt-1" style={{ color: 'var(--text-muted)' }}>&ldquo;This can be illustrated by &hellip; which demonstrates that &hellip;&rdquo;</p>
+            </div>
+            <div>
+              <span className="font-semibold" style={{ color: 'var(--accent-text)' }}>5. Mini-Evaluation (Optional but High-Value)</span>
+              <p className="mt-1">Add a critical perspective: limitations, trade-offs, or conditions.</p>
+              <p className="italic mt-1" style={{ color: 'var(--text-muted)' }}>&ldquo;However, this depends on &hellip;&rdquo;</p>
+            </div>
+            <div>
+              <span className="font-semibold" style={{ color: 'var(--accent-text)' }}>6. Concluding Sentence</span>
+              <p className="mt-1">One sentence tying your argument together.</p>
+              <p className="italic mt-1" style={{ color: 'var(--text-muted)' }}>&ldquo;Taken together, these elements show that &hellip;&rdquo;</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Answer card */}
       <div
